@@ -11,14 +11,10 @@ class Node{
 
 public:
     // Constructor...
-    Node(){
-
-    }
+    Node(){}
 
     // Destructor...
-    ~Node(){
-
-    }
+    ~Node(){}
 
     // Relevant functions if needed...
 
@@ -35,23 +31,14 @@ class Edge{
 
 public:
     // Constructor...
-    Edge(){
-
-    }
+    Edge(){}
 
     // Destructor...
-    ~Edge(){
-
-    }
+    ~Edge(){}
 
     // Functions to call for getting certain Edge attributes (can make the variables directly public but this looks cooler hehe)
-    Node* get_dist(){
-        return dest;
-    }
-
-    int get_length(){
-        return length;
-    }
+    Node* get_dest();
+    int get_length();
 
     // Relevant functions if needed...
 
@@ -64,35 +51,31 @@ public:
     int E; // Number of esges, if required
 
     // Constructor...
-    Graph(){
-
-    }
+    Graph(){}
 
     // Destructor...
-    ~Graph(){
-
-    }
+    ~Graph(){}
 
     // Adding a Node
-    void addNode(Node* v){
-
-    }
+    void addNode(Node* v);
 
     // Removing a Node, can implement as complete delete or mark Node to not be used
-    void removeNode(Node* v){
-
-    }
+    void removeNode(Node* v);
 
     // Adding an Edge, input source Node and Edge (which consists of destination Node)
-    void addEdge(Node* v, Edge* e){
-
-    }
+    void addEdge(Node* v, Edge* e);
 
     // Removing an Edge, implementation for this too is flexible, here Node (source) has to be taken as input (or maybe not necessary?)
-    void removeEdge(Node* v, Edge* e){
-
-    }
+    void removeEdge(Node* v, Edge* e);
 
     // Other relevant functions, whatever required...
 
 };
+
+Node* Edge::get_dest(){
+    return dest;
+}
+
+int Edge::get_length(){
+    return length;
+}
