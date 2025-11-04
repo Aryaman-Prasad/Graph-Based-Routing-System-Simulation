@@ -5,6 +5,18 @@ bool Node::isRestricted(){
     return restricted;
 }
 
+int Node::getid(){
+    return id;
+}
+
+double Node::get_lat(){
+    return lat;
+}
+
+double Node::get_lon(){
+    return lon;
+}
+
 // Implementation of functions for Node, Edge and Graph classes
 
 void Graph::addNode(Node* v){
@@ -18,7 +30,7 @@ void Graph::removeNode(Node* v){
 }
 
 void Graph::addEdge(Node* v, Edge* e){
-    adj[v].push_back(e); // Is this enough? Should we push back the edge into adjacency list of destination as well?
+    adj[v->getid()].push_back(e); // Is this enough? Should we push back the edge into adjacency list of destination as well?
     E++;
 }
 
@@ -27,6 +39,15 @@ void Graph::removeEdge(Node* v, Edge* e){
 
 }
 
+Node* Graph::getNode(int id){
+    return vertices[id];
+}
+
+double Graph::distance(Node* v1,Node* v2){
+    double dx=v1->get_lat()-v2->get_lat();
+    double dy=v1->get_lon()-v2->get_lon();
+    return sqrt(dx*dx + dy*dy);
+}
 // EDGE Class Functions //
 Node* Edge::get_dest(){
     return dest;

@@ -2,6 +2,8 @@
 #include <vector>
 #include <map>
 #include <queue>
+#include <cmath>
+#include <algorithm>
 // Header file for graph, can additionally make something like a graphUtils.cpp or 
 // graphUtils.hpp for implementations any functions defined here
 
@@ -20,7 +22,9 @@ public:
 
     // Relevant functions if needed...
     bool isRestricted();
-
+    int getid();
+    double get_lat();
+    double get_lon();
 };
 
 class Edge{
@@ -78,5 +82,7 @@ public:
 
     // Other relevant functions, whatever required...
     Node* getNode(int id);
+
+    double distance(Node* v1,Node* v2);
 
 };

@@ -6,13 +6,12 @@
 
 // Comparison operator for priority queue
 struct cmp{
-    bool operator()(std::pair<Node*, int> a, std::pair<Node*, int> b){
+    bool operator()(std::pair<Node*, int>& a, std::pair<Node*, int>& b){
         return a.second > b.second;
     }
 };
 
-void sssp(Graph &G, Node* s, std::map<Node*, bool> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
-    struct cmp;
+void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
 
     // Initialization...
@@ -34,7 +33,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, bool> &sp, std::map<Node*, Node*> &
             continue;
         }
 
-        for (Edge* e : G.adj[v.first]){ // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
+        for (Edge* e : G.adj[v.first->getid()]){ // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
             if (sp[v.first] + e->get_length() < sp[e->get_dest()]){
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
