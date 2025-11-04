@@ -12,7 +12,7 @@ struct cmp{
 };
 
 void sssp(Graph &G, Node* s, std::map<Node*, bool> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
-    struct cmp;
+
     std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
 
     // Initialization...
