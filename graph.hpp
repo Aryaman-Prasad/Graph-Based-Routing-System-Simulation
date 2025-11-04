@@ -2,36 +2,36 @@
 #include <vector>
 #include <map>
 #include <queue>
-
 // Header file for graph, can additionally make something like a graphUtils.cpp or 
 // graphUtils.hpp for implementations any functions defined here
 
 class Node{
     // Node attributes (id, latitude, longitude etc)...
-
+    int id;
+    double lat,lon;
+    bool restricted;
 public:
     // Constructor...
-    Node(){}
+    Node(int id,double lat,double lon,bool restricted):id(id),lat(lat),lon(lon),restricted(restricted){}
 
     // Destructor...
     ~Node(){}
-
+    bool isRestricted();
     // Relevant functions if needed...
 
 };
 
 class Edge{
     // Edge attributes (id, length, speed_profile, oneway etc)...
+    int id;
     int length;
-
-    // My rough idea: Edge stores the destination Node, so Graph will be defined
-    // with adjacency list/map with a specific Node having multiple Edges which
-    // inturn consist of the destination Node corresponding to that Edge
     Node* dest;
-
+    std::vector<double> speed_profile;
+    bool restricted;
+    std::string road_type;
 public:
     // Constructor...
-    Edge(){}
+    Edge(int id,int length,Node* dest,std::vector<double> speed_profile,bool restricted,std::string road_type):id(id),length(length),dest(dest),speed_profile(speed_profile),restricted(restricted),road_type(road_type){}
 
     // Destructor...
     ~Edge(){}
@@ -39,7 +39,8 @@ public:
     // Functions to call for getting certain Edge attributes (can make the variables directly public but this looks cooler hehe)
     Node* get_dest();
     int get_length();
-
+    void update_length(int len);
+    bool isRestricted();
     // Relevant functions if needed...
 
 };
@@ -48,10 +49,10 @@ class Graph{
 public:
     std::map<Node*, std::vector<Edge*>> adj; // Can be vector (hash) instead of map, I have written map for clarity
     int V; // Number of vertices
-    int E; // Number of esges, if required
+    int E; // Number of edges, if required
 
     // Constructor...
-    Graph(){}
+    Graph():V(0),E(0){}
 
     // Destructor...
     ~Graph(){}
@@ -72,10 +73,3 @@ public:
 
 };
 
-Node* Edge::get_dest(){
-    return dest;
-}
-
-int Edge::get_length(){
-    return length;
-}

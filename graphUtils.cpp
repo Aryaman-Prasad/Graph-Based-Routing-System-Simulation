@@ -1,5 +1,10 @@
 #include "graph.hpp"
 
+// NODE Class Functions //
+bool Node::isRestricted(){
+    return restricted;
+}
+
 // Implementation of functions for Node, Edge and Graph classes
 
 void Graph::addNode(Node* v){
@@ -22,4 +27,21 @@ void Graph::removeEdge(Node* v, Edge* e){
 
 }
 
+// EDGE Class Functions //
+
+Node* Edge::get_dest(){
+    return dest;
+}
+
+int Edge::get_length(){
+    return length;
+}
+
+void Edge::update_length(int len){
+    length=len;
+}
+
+bool Edge::isRestricted(){
+    return restricted;
+}
 // Other relevant functions
