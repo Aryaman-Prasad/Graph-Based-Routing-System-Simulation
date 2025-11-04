@@ -13,7 +13,7 @@ void Graph::addNode(Node* v){
 
 void Graph::removeNode(Node* v){
     // Completely removing the node, this can be changed...
-    adj.erase(v);
+    adj.erase(v); // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
     V--;
 }
 
@@ -28,7 +28,6 @@ void Graph::removeEdge(Node* v, Edge* e){
 }
 
 // EDGE Class Functions //
-
 Node* Edge::get_dest(){
     return dest;
 }
@@ -38,10 +37,11 @@ int Edge::get_length(){
 }
 
 void Edge::update_length(int len){
-    length=len;
+    length = len;
 }
 
 bool Edge::isRestricted(){
     return restricted;
 }
+
 // Other relevant functions

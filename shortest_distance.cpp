@@ -1,4 +1,4 @@
-#include "graphUtils.cpp"
+#include "graph.hpp"
 
 #ifndef INF
 #define INF 1000000000
@@ -12,7 +12,7 @@ struct cmp{
 };
 
 void sssp(Graph &G, Node* s, std::map<Node*, bool> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
-
+    struct cmp;
     std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
 
     // Initialization...
@@ -34,7 +34,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, bool> &sp, std::map<Node*, Node*> &
             continue;
         }
 
-        for (Edge* e : G.adj[v.first]){
+        for (Edge* e : G.adj[v.first]){ // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
             if (sp[v.first] + e->get_length() < sp[e->get_dest()]){
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();

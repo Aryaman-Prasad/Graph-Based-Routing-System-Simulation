@@ -10,14 +10,16 @@ class Node{
     int id;
     double lat,lon;
     bool restricted;
+
 public:
     // Constructor...
-    Node(int id,double lat,double lon,bool restricted):id(id),lat(lat),lon(lon),restricted(restricted){}
+    Node(int id, double lat, double lon) : id(id), lat(lat), lon(lon), restricted(true){}
 
     // Destructor...
     ~Node(){}
-    bool isRestricted();
+
     // Relevant functions if needed...
+    bool isRestricted();
 
 };
 
@@ -26,12 +28,15 @@ class Edge{
     int id;
     int length;
     Node* dest;
+    double avg_time;
     std::vector<double> speed_profile;
+    bool oneway;
     bool restricted;
     std::string road_type;
+
 public:
     // Constructor...
-    Edge(int id,int length,Node* dest,std::vector<double> speed_profile,bool restricted,std::string road_type):id(id),length(length),dest(dest),speed_profile(speed_profile),restricted(restricted),road_type(road_type){}
+    Edge(int id, int length, Node* dest, double avg, std::vector<double> speed_profile, bool oneway, std::string road_type) : id(id), length(length), dest(dest), avg_time(avg), speed_profile(speed_profile), oneway(oneway), restricted(true), road_type(road_type){}
 
     // Destructor...
     ~Edge(){}
@@ -41,13 +46,15 @@ public:
     int get_length();
     void update_length(int len);
     bool isRestricted();
+
     // Relevant functions if needed...
 
 };
 
 class Graph{
 public:
-    std::map<Node*, std::vector<Edge*>> adj; // Can be vector (hash) instead of map, I have written map for clarity
+    std::vector<std::vector<Edge*>> adj; // Can be vector (hash) instead of map, I have written map for clarity
+    std::vector<Node*> vertices;
     int V; // Number of vertices
     int E; // Number of edges, if required
 
@@ -70,6 +77,6 @@ public:
     void removeEdge(Node* v, Edge* e);
 
     // Other relevant functions, whatever required...
+    Node* getNode(int id);
 
 };
-
