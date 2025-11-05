@@ -5,7 +5,7 @@ using json = nlohmann::json;
 
 void process_graph(json j, Graph &G){
     // Initialization...
-    int v = j["meta"]["nodes"];
+    int v = G.V;
 
     // Adding vertices...
     for (int i=0; i<v; i++){
@@ -29,6 +29,12 @@ void process_graph(json j, Graph &G){
             j["edges"][i]["oneway"], 
             j["edges"][i]["road_type"]); // Include whatever parameters required
 
+        G.addEdge(G.getNode(u), e1, true);
+
+        if (j["edges"][i]["oneway"]){
+            continue; // Skip creation of second edge since edge needs to be oneway
+        }
+
         Edge* e2 = new Edge(j["edges"][i]["id"], 
             j["edges"][i]["length"], 
             G.getNode(u), 
@@ -37,8 +43,8 @@ void process_graph(json j, Graph &G){
             j["edges"][i]["oneway"], 
             j["edges"][i]["road_type"]); // Include whatever paramteres required
 
-        G.addEdge(G.getNode(u), e1);
-        G.addEdge(G.getNode(v), e2);
+        // Here E will get incremented by 2 overall since two directed edges are being added...
+        G.addEdge(G.getNode(v), e2, false);
     }
 
     // Returning final graph

@@ -25,6 +25,7 @@ public:
     int getid();
     double get_lat();
     double get_lon();
+    void updateRestriction(bool d);
 };
 
 class Edge{
@@ -46,10 +47,13 @@ public:
     ~Edge(){}
 
     // Functions to call for getting certain Edge attributes (can make the variables directly public but this looks cooler hehe)
+    int getId();
     Node* get_dest();
     int get_length();
     void update_length(int len);
     bool isRestricted();
+    bool isOneway();
+    void updateRestriction(bool d);
 
     // Relevant functions if needed...
 
@@ -57,13 +61,18 @@ public:
 
 class Graph{
 public:
-    std::vector<std::vector<Edge*>> adj; // Can be vector (hash) instead of map, I have written map for clarity
+    std::vector<std::vector<Edge*>> adj; // It is now a vector :D
     std::vector<Node*> vertices;
+    std::map<int, std::pair<int, int>> edges; // Map to store edge id and their corresponding vertex id's that are connected by it
     int V; // Number of vertices
     int E; // Number of edges, if required
 
     // Constructor...
-    Graph():V(0),E(0){}
+    Graph(int v) : V(v), E(0) {
+        // Reserve space in the vectors...
+        adj.reserve(v);
+        vertices.reserve(v);
+    }
 
     // Destructor...
     ~Graph(){}
@@ -75,14 +84,15 @@ public:
     void removeNode(Node* v);
 
     // Adding an Edge, input source Node and Edge (which consists of destination Node)
-    void addEdge(Node* v, Edge* e);
+    void addEdge(Node* v, Edge* e, bool d);
 
-    // Removing an Edge, implementation for this too is flexible, here Node (source) has to be taken as input (or maybe not necessary?)
-    void removeEdge(Node* v, Edge* e);
+    // Removing an Edge, implementation for this too is flexible, here edge_id is passed in the query...
+    bool removeEdge(int edge_id);
 
     // Other relevant functions, whatever required...
     Node* getNode(int id);
 
+    // Euclidian distance between two nodes (different from edge length)
     double distance(Node* v1,Node* v2);
 
 };

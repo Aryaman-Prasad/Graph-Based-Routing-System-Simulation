@@ -14,6 +14,11 @@ struct cmp{
 void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
 
+    // If source node is restricted then even god does not know what to do...
+    if (s->isRestricted()){
+        return ;
+    }
+
     // Initialization...
     int n = G.V;
 
@@ -33,7 +38,11 @@ void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &p
             continue;
         }
 
-        for (Edge* e : G.adj[v.first->getid()]){ // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
+        for (Edge* e : G.adj[v.first->getid()]){ // Noe it will work :D
+            if (e->get_dest()->isRestricted() || e->isRestricted()){
+                continue; // Skip if either the Edge or the destination Node is restricted...
+            }
+            
             if (sp[v.first] + e->get_length() < sp[e->get_dest()]){
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
@@ -47,5 +56,5 @@ void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &p
         }
     }
 
-    return;
+    return ;
 }

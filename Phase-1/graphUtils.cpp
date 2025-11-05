@@ -5,50 +5,15 @@ bool Node::isRestricted(){
     return restricted;
 }
 
-int Node::getid(){
+void Node::updateRestriction(bool d){
+    restricted = d;
+}
+
+// EDGE Class Functions //
+int Edge::getId(){
     return id;
 }
 
-double Node::get_lat(){
-    return lat;
-}
-
-double Node::get_lon(){
-    return lon;
-}
-
-// Implementation of functions for Node, Edge and Graph classes
-
-void Graph::addNode(Node* v){
-    V++;
-}
-
-void Graph::removeNode(Node* v){
-    // Completely removing the node, this can be changed...
-    adj.erase(v); // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
-    V--;
-}
-
-void Graph::addEdge(Node* v, Edge* e){
-    adj[v->getid()].push_back(e); // Is this enough? Should we push back the edge into adjacency list of destination as well?
-    E++;
-}
-
-void Graph::removeEdge(Node* v, Edge* e){
-    // Can implement as just marking Edge to not be used, might be better...
-
-}
-
-Node* Graph::getNode(int id){
-    return vertices[id];
-}
-
-double Graph::distance(Node* v1,Node* v2){
-    double dx=v1->get_lat()-v2->get_lat();
-    double dy=v1->get_lon()-v2->get_lon();
-    return sqrt(dx*dx + dy*dy);
-}
-// EDGE Class Functions //
 Node* Edge::get_dest(){
     return dest;
 }
@@ -64,5 +29,60 @@ void Edge::update_length(int len){
 bool Edge::isRestricted(){
     return restricted;
 }
+
+bool Edge::isOneway(){
+    return oneway;
+}
+
+void Edge::updateRestriction(bool d){
+    restricted = d;
+}
+
+// Implementation of functions for Node, Edge and Graph classes
+
+void Graph::addNode(Node* v){
+    // Adding nodes initially during graph construction
+    vertices[v->getid()] = v;
+    V++;
+}
+
+void Graph::removeNode(Node* v){
+    // Marking vector to be unused since node can be restored in later queries
+    vertices[v->getid()]->updateRestriction(false);
+}
+
+void Graph::addEdge(Node* v, Edge* e, bool d){
+    adj[v->getid()].push_back(e);
+    if (d) {
+        edges[e->getId()] = {v->getid(), e->get_dest()->getid()}; // In case of undirected edges, addEdge() would be called twice but we want addition into map only once, hence the boolean variable...
+    }
+    E++;
+}
+
+bool Graph::removeEdge(int edge_id){
+    std::pair<int, int> vers = edges[edge_id]; // Find the pair of vertices whose edge needs to be marked
+    bool m = false; // Marker to check if the edge actually got removed or not
+
+    // Iterating over edges w.r.t first node
+    for (Edge* e : adj[vers.first]){
+        if (e->getId() == edge_id){
+            e->updateRestriction(false); // Mark edge
+            m = true;
+            break;
+        }
+    }
+
+    // Iterating over edges w.r.t second node, if edge is oneway then no match might be found but that is fine
+    for (Edge* e : adj[vers.second]){
+        if (e->getId() == edge_id){
+            e->updateRestriction(false); // Mark edge
+            m = true;
+            break;
+        }
+    }
+
+    return m;
+}
+
 
 // Other relevant functions
