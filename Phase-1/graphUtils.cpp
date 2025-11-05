@@ -1,6 +1,20 @@
 #include "graph.hpp"
 
+using json = nlohmann::json;
+
 // NODE Class Functions //
+int Node::getid(){
+    return id;
+}
+
+double Node::get_lat(){
+    return lat;
+}
+
+double Node::get_lon(){
+    return lon;
+}
+
 bool Node::isRestricted(){
     return restricted;
 }
@@ -18,12 +32,20 @@ Node* Edge::get_dest(){
     return dest;
 }
 
-int Edge::get_length(){
+double Edge::get_length(){
     return length;
 }
 
-void Edge::update_length(int len){
+std::string Edge::getType(){
+    return road_type;
+}
+
+void Edge::update_length(double len){
     length = len;
+}
+
+void Edge::update_avg_time(double time){
+    avg_time = time;
 }
 
 bool Edge::isRestricted(){
@@ -38,12 +60,29 @@ void Edge::updateRestriction(bool d){
     restricted = d;
 }
 
+void Edge::updateProfile(std::vector<double> newProfile){
+    speed_profile = newProfile;
+}
+
+void Edge::updateType(std::string newType){
+    road_type = newType;
+}
+
 // Implementation of functions for Node, Edge and Graph classes
+Node* Graph::getNode(int id){
+    return vertices[id];
+}
+
+double Graph::distance(Node* v1, Node* v2){
+    double dx = v1->get_lat() - v2->get_lat();
+    double dy = v1->get_lon() - v2->get_lon();
+    return sqrt(dx*dx + dy*dy);
+}
 
 void Graph::addNode(Node* v){
     // Adding nodes initially during graph construction
     vertices[v->getid()] = v;
-    V++;
+    // V++; //  DO NOT ADD THIS, SINCE CONSTRUCTOR ALREADY INITIALIZES V
 }
 
 void Graph::removeNode(Node* v){
@@ -66,7 +105,7 @@ bool Graph::removeEdge(int edge_id){
     // Iterating over edges w.r.t first node
     for (Edge* e : adj[vers.first]){
         if (e->getId() == edge_id){
-            e->updateRestriction(false); // Mark edge
+            e->updateRestriction(true); // Mark edge
             m = true;
             break;
         }
@@ -75,8 +114,60 @@ bool Graph::removeEdge(int edge_id){
     // Iterating over edges w.r.t second node, if edge is oneway then no match might be found but that is fine
     for (Edge* e : adj[vers.second]){
         if (e->getId() == edge_id){
-            e->updateRestriction(false); // Mark edge
+            e->updateRestriction(true); // Mark edge
             m = true;
+            break;
+        }
+    }
+
+    return m;
+}
+
+bool Graph::modifyEdge(int edge_id, json &patch){
+    if (edges.find(edge_id) == edges.end()){
+        return false; // Given edge id not present
+    }
+    std::pair<int, int> vers = edges[edge_id];
+    bool m = false;
+
+    // Iterating over edges w.r.t first node
+    for (Edge* e : adj[vers.first]){
+        if (e->getId() == edge_id){
+            e->updateRestriction(false); // Restore edge
+            m = true;
+            if (patch.find("length") != patch.end()){
+                e->update_length(patch["length"]);
+            }
+            if (patch.find("average_time") != patch.end()){
+                e->update_avg_time(patch["average_time"]);
+            }
+            if (patch.find("speed_profile") != patch.end()){
+                e->updateProfile(patch["speed_profile"]);
+            }
+            if (patch.find("road_type") != patch.end()){
+                e->updateType(patch["road_type"]);
+            }
+            break;
+        }
+    }
+
+    // Iterating over edges w.r.t second node
+    for (Edge* e : adj[vers.second]){
+        if (e->getId() == edge_id){
+            e->updateRestriction(false); // Restore edge
+            m = true;
+            if (patch.find("length") != patch.end()){
+                e->update_length(patch["length"]);
+            }
+            if (patch.find("average_time") != patch.end()){
+                e->update_avg_time(patch["average_time"]);
+            }
+            if (patch.find("speed_profile") != patch.end()){
+                e->updateProfile(patch["speed_profile"]);
+            }
+            if (patch.find("road_type") != patch.end()){
+                e->updateType(patch["road_type"]);
+            }
             break;
         }
     }

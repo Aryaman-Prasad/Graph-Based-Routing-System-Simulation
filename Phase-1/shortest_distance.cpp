@@ -1,17 +1,13 @@
-#include "graph.hpp"
+#include "common.hpp"
 
 #ifndef INF
 #define INF 1000000000
 #endif
 
 // Comparison operator for priority queue
-struct cmp{
-    bool operator()(std::pair<Node*, int>& a, std::pair<Node*, int>& b){
-        return a.second > b.second;
-    }
-};
 
-void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
+
+void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
 
     // If source node is restricted then even god does not know what to do...
@@ -39,11 +35,11 @@ void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &p
         }
 
         for (Edge* e : G.adj[v.first->getid()]){ // Noe it will work :D
-            if (e->get_dest()->isRestricted() || e->isRestricted()){
+            if (e->get_dest()->isRestricted() || e->isRestricted() || forbidden_roads[e->getType()]){
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }
             
-            if (sp[v.first] + e->get_length() < sp[e->get_dest()]){
+            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
 

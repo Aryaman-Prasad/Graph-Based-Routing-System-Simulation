@@ -1,9 +1,16 @@
+#ifndef GRAPH_HPP
+#define GRAPH_HPP
+
 #include <iostream>
 #include <vector>
 #include <map>
 #include <queue>
 #include <cmath>
 #include <algorithm>
+#include "nlohmann/json.hpp"
+
+using json = nlohmann::json;
+
 // Header file for graph, can additionally make something like a graphUtils.cpp or 
 // graphUtils.hpp for implementations any functions defined here
 
@@ -15,7 +22,7 @@ class Node{
 
 public:
     // Constructor...
-    Node(int id, double lat, double lon) : id(id), lat(lat), lon(lon), restricted(true){}
+    Node(int id, double lat, double lon) : id(id), lat(lat), lon(lon), restricted(false){}
 
     // Destructor...
     ~Node(){}
@@ -31,7 +38,7 @@ public:
 class Edge{
     // Edge attributes (id, length, speed_profile, oneway etc)...
     int id;
-    int length;
+    double length;
     Node* dest;
     double avg_time;
     std::vector<double> speed_profile;
@@ -41,7 +48,7 @@ class Edge{
 
 public:
     // Constructor...
-    Edge(int id, int length, Node* dest, double avg, std::vector<double> speed_profile, bool oneway, std::string road_type) : id(id), length(length), dest(dest), avg_time(avg), speed_profile(speed_profile), oneway(oneway), restricted(true), road_type(road_type){}
+    Edge(int id, double length, Node* dest, double avg, std::vector<double> speed_profile, bool oneway, std::string road_type) : id(id), length(length), dest(dest), avg_time(avg), speed_profile(speed_profile), oneway(oneway), restricted(false), road_type(road_type){}
 
     // Destructor...
     ~Edge(){}
@@ -49,11 +56,15 @@ public:
     // Functions to call for getting certain Edge attributes (can make the variables directly public but this looks cooler hehe)
     int getId();
     Node* get_dest();
-    int get_length();
-    void update_length(int len);
+    double get_length();
+    std::string getType();
+    void update_length(double len);
+    void update_avg_time(double time);
     bool isRestricted();
     bool isOneway();
     void updateRestriction(bool d);
+    void updateProfile(std::vector<double> newProfile);
+    void updateType(std::string newType);
 
     // Relevant functions if needed...
 
@@ -89,6 +100,9 @@ public:
     // Removing an Edge, implementation for this too is flexible, here edge_id is passed in the query...
     bool removeEdge(int edge_id);
 
+    // Modifying / restoring the edge
+    bool modifyEdge(int edge_id, json &patch);
+
     // Other relevant functions, whatever required...
     Node* getNode(int id);
 
@@ -96,12 +110,5 @@ public:
     double distance(Node* v1,Node* v2);
 
 };
-// need to change operator<
-struct path{
-    std::vector<Node*> vertices;
-    int length;
-    bool operator<(const path& other)const{
-        if(length==other.length)return vertices.size()<other.vertices.size();
-        return length<other.length;
-    }
-};
+
+#endif
