@@ -96,3 +96,12 @@ public:
     double distance(Node* v1,Node* v2);
 
 };
+// need to change operator<
+struct path{
+    std::vector<Node*> vertices;
+    int length;
+    bool operator<(const path& other)const{
+        if(length==other.length)return vertices.size()<other.vertices.size();
+        return length<other.length;
+    }
+};
