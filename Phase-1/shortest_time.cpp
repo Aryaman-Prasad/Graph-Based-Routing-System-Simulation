@@ -1,44 +1,46 @@
-#include "common.hpp"
+#include "graph.hpp"
 
 #ifndef INF
 #define INF 1000000000
 #endif
 
-#ifndef TOT_SECONDS
 #define TOT_SECONDS 86400
-#endif
-
-#ifndef INTERVAL_TIME
 #define INTERVAL_TIME 900
-#endif
 
+struct cmp{
+    bool operator()(std::pair<Node*, double>& a, std::pair<Node*, double>& b){
+        return a.second > b.second;
+    }
+};
 
-
-double get_travel_time(Graph &G, Node* start, Node* end, double arrival_time, const std::vector<bool>& profile) {
-    double dist = G.distance(start, end);
-    double t = arrival_time - arrival_time / TOT_SECONDS;
+double get_travel_time(Graph &G, Node* start, Node* end, double arrival_time, const std::vector<double>& profile) {
+    double t = arrival_time - ((int)arrival_time) / TOT_SECONDS;
     double distance = G.distance(start, end);
     double time = 0;
-    //Assuming that all of a person's travels get over in a day!
 
-    int interval = t / INTERVAL_TIME;
+    int interval = ((int)t) / INTERVAL_TIME;
     double dist_left = distance;
     double speed = 0.0;
     double time_left_in_interval = INTERVAL_TIME - (t - interval*INTERVAL_TIME);
-    for (int i=interval; i<(TOT_SECONDS/INTERVAL_TIME); i++) {
+    int i=interval;
+    while (dist_left>0) {
         if (i!=interval) {time_left_in_interval = INTERVAL_TIME;}
         speed = profile[i];
         if (speed*time_left_in_interval >= dist_left) {
             time += dist_left/speed;
-            return time;
+            dist_left = 0;
         }
-        time += time_left_in_interval;
-        dist_left -= speed*time_left_in_interval;
+        else {
+            time += time_left_in_interval;
+            dist_left -= speed*time_left_in_interval;
+            i++;  
+        }
     }
+    return time;
 }
 
-void shortest_time(Graph &G, Node* s, std::map<Node*, int> &arrival_time, std::map<Node*, Node*> &parent, const std::vector<bool>& profile) {
-    std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
+void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std::map<Node*, Node*> &parent, const std::vector<double>& profile) {
+    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
 
     // Initialization...
         int n = G.V;
