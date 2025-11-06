@@ -1,5 +1,5 @@
-#include <../Phase-1/graph.hpp>
-#include <../Phase-1/shortest_distance.cpp>
+#include <../graph.hpp>
+#include <../shortest_distance.cpp>
 #include <./P_path.hpp>
 
 void KSP(Graph &G, Node* start, Node* dest, int k){
