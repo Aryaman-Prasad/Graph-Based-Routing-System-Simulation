@@ -1,52 +1,68 @@
-#include "graph.hpp"
+#include "common.hpp"
 
 #ifndef INF
 #define INF 1000000000
 #endif
 
-// Comparison operator for priority queue
-struct cmp{
-    bool operator()(std::pair<Node*, int> &a, std::pair<Node*, int> &b){
-        return a.second > b.second;
+Node* nearest_node(Graph &G, std::pair<double, double> &p){
+    double min_dist = INF;
+    Node* node = nullptr;
+
+    for (int i=0; i<G.V; i++){
+        double d = G.distance(p, G.vertices[i]);
+
+        if (d < min_dist){
+            min_dist = d;
+            node = G.vertices[i];
+        }
     }
-};
+
+    return node;
+}
+
 // MINOR Changes and formatting too be  made
-std::vector<std::pair<Node*,int>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
-    std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
-    std::map<Node*, int> sp;
+std::vector<std::pair<Node*,double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
+    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
+    std::map<Node*, double> sp;
+
     // Initialization...
     int n = G.V;
 
     // sp.assign(n, INF);
     // parentassign(n, nullptr);
     // Can be needed if sp and parent are defined as vectors...
-    std::vector<std::pair<Node*,int>> KNN;
-    std::map<Node*,bool> M;
 
-    sp[s] = 0;
-    unknown.push({s, 0});
-    M[s]=1;
+    std::vector<std::pair<Node*, double>> KNN;
+    std::map<Node*, bool> M;
 
-    int count=0;
+    sp[s] = 0.0;
+    unknown.push({s, 0.0});
+    M[s] = true;
+
+    int count = 0;
+
     // Dijkstra...
-    while (!unknown.empty() && count<k){
-        std::pair<Node*, int> v = unknown.top();
+    while (!unknown.empty() && count < k){
+        std::pair<Node*, double> v = unknown.top();
         unknown.pop();
 
-        if(v.second==INF)break;
+        // if(v.second == INF){
+        //     break;
+        // }
 
         if(!M[v.first]){
             count++;
             KNN.push_back(v);
-            M[v.first]=1;
+            M[v.first] = true;
         }
 
         if (v.second != sp[v.first]){
             continue;
         }
 
-        for (Edge* e : G.adj[v.first->getid()]){ // THIS NEEDS TO BE CHANGED NOW THAT adj IS A VECTOR INSTEAD OF MAP
-            if (sp[v.first] + e->get_length() < sp[e->get_dest()]){
+        for (Edge* e : G.adj[v.first->getid()]){ // Now its corret :D
+            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
+
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
 

@@ -1,14 +1,15 @@
 #include "common.hpp"
 
-#ifndef INF
-#define INF 1000000000
-#endif
+// Redundant...
+// #ifndef INF
+// #define INF 1000000000
+// #endif
 
 // Comparison operator for priority queue
 
 
-void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as map for clarity
-    std::priority_queue<std::pair<Node*, int>, std::vector<std::pair<Node*, int>>, cmp> unknown;
+void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as map for clarity
+    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
 
     // If source node is restricted then even god does not know what to do...
     if (s->isRestricted()){
@@ -22,12 +23,12 @@ void sssp(Graph &G, Node* s, std::map<Node*, int> &sp, std::map<Node*, Node*> &p
     // parentassign(n, nullptr);
     // Can be needed if sp and parent are defined as vectors...
 
-    sp[s] = 0;
-    unknown.push({s, 0});
+    sp[s] = 0.0;
+    unknown.push({s, 0.0});
 
     // Dijkstra...
     while (!unknown.empty()){
-        std::pair<Node*, int> v = unknown.top();
+        std::pair<Node*, double> v = unknown.top();
         unknown.pop();
 
         if (v.second != sp[v.first]){

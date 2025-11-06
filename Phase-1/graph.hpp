@@ -108,7 +108,7 @@ public:
     Node* getNode(int id);
 
     // Euclidian distance between two nodes (different from edge length)
-    double distance(Node* v1,Node* v2);
+    double distance(std::pair<double, double> v1,Node* v2);
 
 };
 

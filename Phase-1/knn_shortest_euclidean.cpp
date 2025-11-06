@@ -1,23 +1,16 @@
-#include "graph.hpp"
+#include "common.hpp"
 
-#ifndef INF
-#define INF 1000000000
-#endif
+// Redundant...
+// #ifndef INF
+// #define INF 1000000000
+// #endif
 
-struct cmp{
-    bool operator()(std::pair<Node*, double>& a, std::pair<Node*, double>& b){
-        return a.second > b.second;
-    }
-};
-
-std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, Node* s, int k){
-    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
+std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k){
+    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp_r> unknown;
     int n=G.V;
 
     for(int i=0;i<n;i++){
-        if(G.vertices[i]!=s){
-            unknown.push({G.vertices[i],G.distance(s,G.vertices[i])});
-        }
+        unknown.push({G.vertices[i],G.distance(s,G.vertices[i])});
 
         if(unknown.size()>k){
             unknown.pop();
@@ -31,5 +24,6 @@ std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, Node* s, int k){
         unknown.pop();
     }
     std::reverse(KNN.begin(),KNN.end());
+
     return KNN;
 }

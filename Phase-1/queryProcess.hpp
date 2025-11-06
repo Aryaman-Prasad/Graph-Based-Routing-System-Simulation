@@ -25,12 +25,12 @@ json process_query(json query, Graph &G){
         return result;
     }
 
-    // Query for Dijkstra
+    // Query for shortest path
     if (query["type"] == "shortest_path"){
 
         // Minimizing distance, O(ElogE) time
         if (query["mode"] == "distance"){
-            std::map<Node*, int> sp;
+            std::map<Node*, double> sp;
             std::map<Node*, Node*> parent;
             Node* s = G.vertices[query["source"]];
             std::map<std::string, bool> forbidden_roads = {{"primary" , false}, {"secondary" , false}, {"tertiary" , false}, {"local" , false}, {"expressway" , false}};
@@ -120,7 +120,65 @@ json process_query(json query, Graph &G){
             return result;
         }
     }
-    return query;
+
+    // Query for K nearest neighbours
+    else if (query["type"] == "knn"){
+
+        // KNN based on Euclidean distance, O(VlogV) time
+        if (query["metric"] == "euclidean"){
+            std::pair<double, double> p;
+            p.first = query["query_point"]["lat"];
+            p.second = query["query_point"]["lon"];
+            int k = query["k"];
+
+            // O(V) optimization for k = 1
+            if (k == 1){
+                Node* ans = nearest_node(G, p);
+                
+                result["id"] = query["id"];
+                result["nodes"] = {ans->getid()};
+                return result;
+            }
+
+            std::vector<std::pair<Node*, double>> knn = KNN_euclidean(G, p, k);
+
+            std::vector<int> ans;
+            for (auto i : knn){
+                ans.push_back(i.first->getid());
+            }
+
+            result["id"] = query["id"];
+            result["nodes"] = ans;
+            return result;
+        }
+
+        // KNN based on shortest path, O(V + ElogE) time I think, though runtime depends on k as well
+        else if (query["metric"] == "shortest_path"){
+            std::pair<double, double> p;
+            p.first = query["query_point"]["lat"];
+            p.second = query["query_point"]["lon"];
+            int k = query["k"];
+
+            // Finding nearest node of given coordinate, O(V) time
+            Node* n = nearest_node(G, p);
+
+            std::map<Node*, Node*> parent;
+
+            std::vector<std::pair<Node*, double>> knn = KNN_sssp(G, n, k, parent);
+
+            std::vector<int> ans;
+            for (auto i : knn){
+                ans.push_back(i.first->getid());
+            }
+
+            result["id"] = query["id"];
+            result["nodes"] = ans;
+            return result;
+        }
+    }
+    
+    // No other possible input should exist
+    assert(false);
 }
 
 #endif

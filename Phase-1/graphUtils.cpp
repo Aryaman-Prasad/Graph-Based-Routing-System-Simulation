@@ -77,9 +77,9 @@ Node* Graph::getNode(int id){
     return vertices[id];
 }
 
-double Graph::distance(Node* v1, Node* v2){
-    double dx = v1->get_lat() - v2->get_lat();
-    double dy = v1->get_lon() - v2->get_lon();
+double Graph::distance(std::pair<double, double> v1, Node* v2){
+    double dx = v1.first - v2->get_lat();
+    double dy = v1.second - v2->get_lon();
     return sqrt(dx*dx + dy*dy);
 }
 

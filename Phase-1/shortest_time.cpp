@@ -1,12 +1,14 @@
 #include "common.hpp"
 
-#ifndef INF
-#define INF 1000000000
-#endif
+// Redundant...
+// #ifndef INF
+// #define INF 1000000000
+// #endif
 
-#ifndef TOT_SECONDS
-#define TOT_SECONDS 86400
-#endif
+// Redundant...
+// #ifndef TOT_SECONDS
+// #define TOT_SECONDS 86400
+// #endif
 
 #ifndef INTERVAL_TIME
 #define INTERVAL_TIME 900
@@ -16,6 +18,7 @@
 #define PROFILE_LEN 96
 #endif
 
+// SUBJECT TO FURTHER CHECKING, NOT YET GUARANTEED TO BE CORRECT...
 double get_travel_time(Edge* e, double arrival_time){
     double dist_left = e->get_length();
     double time = 0;
@@ -40,7 +43,7 @@ double get_travel_time(Edge* e, double arrival_time){
 }
 
 void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads) {
-    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp_d> unknown;
+    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
 
     if (s->isRestricted()){
         return ;
@@ -60,7 +63,7 @@ void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std
         std::pair<Node*, double> v = unknown.top();
         unknown.pop();
 
-        if (v.second > arrival_time[v.first]){
+        if (v.second != arrival_time[v.first]){
             continue;
         }
 
