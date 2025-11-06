@@ -7,11 +7,11 @@ std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
     std::vector<path> B;
     std::map<path,bool> M;
 
-    std::map<Node*, int> sp;
+    std::map<Node*, double> sp;
     std::map<Node*, Node*> parent;
     sssp(G, start, sp, parent);
     path first=P_path(start,dest, sp, parent);
-    if(first.vertices.size()==0)return;
+    if(first.vertices.empty())return {};
 
     A.push_back(first);
     M[first]=1;
@@ -22,6 +22,21 @@ std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
             auto spurNode=A[i-1].vertices[j];
             path rootPath;
             rootPath.vertices=std::vector<Node*> (A[i-1].vertices.begin(),A[i-1].vertices.begin()+j+1);
+
+            rootPath.length=0.0;
+            for (size_t t = 0; t + 1 < rootPath.vertices.size(); ++t) {
+                Node* u=rootPath.vertices[t];
+                Node* v=rootPath.vertices[t + 1];
+                bool f=false;
+                for (Edge* e:G.adj[u->getid()]) {
+                    if (e->get_dest()->getid()==v->getid()) {
+                        rootPath.length+=e->get_length();
+                        f=true;
+                        break;
+                    }
+                }
+            }
+
             std::vector<Edge*> restricted_edges;
             std::vector<Node*> restricted_nodes;
             for(auto &p:A){
@@ -43,7 +58,7 @@ std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
                 }
             }
 
-            std::map<Node*, int> sp2;
+            std::map<Node*, double> sp2;
             std::map<Node*, Node*> parent2;
             sssp(G, spurNode, sp2, parent2);
             path spurPath =P_path(spurNode, dest, sp2,parent2);
