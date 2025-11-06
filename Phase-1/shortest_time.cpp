@@ -53,7 +53,7 @@ void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std
         unknown.push({s, 0});
 
         while (!unknown.empty()){
-            std::pair<Node*, int> v = unknown.top();
+            std::pair<Node*, double> v = unknown.top();
             unknown.pop();
 
             if (v.second > arrival_time[v.first]){
