@@ -58,6 +58,7 @@ public:
     Node* get_dest();
     double get_length();
     std::string getType();
+    std::vector<double> getProfile();
     void update_length(double len);
     void update_avg_time(double time);
     bool isRestricted();

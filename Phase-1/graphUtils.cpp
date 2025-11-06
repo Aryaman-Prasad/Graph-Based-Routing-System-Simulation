@@ -40,6 +40,10 @@ std::string Edge::getType(){
     return road_type;
 }
 
+std::vector<double> Edge::getProfile(){
+    return speed_profile;
+}
+
 void Edge::update_length(double len){
     length = len;
 }
