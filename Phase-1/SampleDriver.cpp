@@ -27,9 +27,12 @@ int main(int argc, char* argv[]) {
         std::cerr << "Failed to open " << argv[1] << std::endl;
         return 1;
     }
+
+    // Reading json file
     json graph_json;
     graph_file >> graph_json;
 
+    // Processing json file to construct graph
     Graph G(graph_json["meta"]["nodes"]);
     process_graph(graph_json, G);
 
