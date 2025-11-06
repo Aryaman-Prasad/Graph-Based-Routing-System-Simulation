@@ -111,5 +111,14 @@ public:
     double distance(std::pair<double, double> v1,Node* v2);
 
 };
+struct path{
+    std::vector<Node*> vertices;
+    int length;
+    bool operator<(const path& other)const{
+        if(length==other.length)return vertices.size()<other.vertices.size();
+        return length<other.length;
+    }
+};
+
 
 #endif
