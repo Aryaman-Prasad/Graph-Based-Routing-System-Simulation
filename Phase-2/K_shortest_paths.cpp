@@ -2,7 +2,7 @@
 #include <./shortest_distance.cpp>
 #include <./P_path.hpp>
 
-void KSP(Graph &G, Node* start, Node* dest, int k){
+std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
     std::vector<path> A;
     std::vector<path> B;
     std::map<path,bool> M;
@@ -79,4 +79,5 @@ void KSP(Graph &G, Node* start, Node* dest, int k){
         A.push_back(B.front());
         B.erase(B.begin());
     }
+    return B;
 }
