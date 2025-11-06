@@ -79,5 +79,5 @@ std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
         A.push_back(B.front());
         B.erase(B.begin());
     }
-    return B;
+    return A;
 }
