@@ -1,8 +1,15 @@
 #include "p_path.hpp"
 
+struct Pathcmp{
+    bool operator()(const Path &a, const Path &b) const {
+        return a.length > b.length; 
+    }
+};
+
+
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     std::vector<Path> A;
-    std::vector<Path> B;
+    std::priority_queue<Path,std::vector<Path>,Pathcmp> B;
     std::map<Path, bool> M;
 
     std::map<Node*, double> sp;
@@ -13,6 +20,13 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     Path first = P_path(start, dest, sp, parent);
     if (first.vertices.empty()){
         return {};
+    }
+
+    std::vector<std::unordered_map<int,double>> edge_lengths(G.V);
+    for(int i=0;i<G.V;i++){
+        for(Edge* e:G.adj[i]){
+            edge_lengths[i][e->get_dest()->getid()]=e->get_length();
+        }
     }
 
     A.push_back(first);
@@ -29,17 +43,9 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             rootPath.length = 0.0;
 
             for (size_t t = 0; t + 1 < rootPath.vertices.size(); ++t) {
-                Node* u = rootPath.vertices[t];
-                Node* v = rootPath.vertices[t + 1];
-                bool f = false;
-
-                for (Edge* e : G.adj[u->getid()]) {
-                    if (e->get_dest()->getid() == v->getid()) {
-                        rootPath.length += e->get_length();
-                        f = true;
-                        break;
-                    }
-                }
+                int u = rootPath.vertices[t]->getid();
+                int v = rootPath.vertices[t + 1]->getid();
+                rootPath.length+=edge_lengths[u][v];
             }
 
             std::vector<Edge*> restricted_edges;
@@ -97,7 +103,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             total_path.length = rootPath.length + spurPath.length;
 
             if (M.find(total_path) == M.end()){
-                B.push_back(total_path);
+                B.push(total_path);
                 M[total_path] = 1;
             }
 
@@ -115,9 +121,8 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             break;
         }
 
-        std::sort(B.begin(), B.end());
-        A.push_back(B.front());
-        B.erase(B.begin());
+        A.push_back(B.top());
+        B.pop();
     }
 
     return A;
