@@ -117,11 +117,15 @@ public:
 
 struct Path{
     std::vector<Node*> vertices;
-    int length;
+    double length;
 
     bool operator<(const Path& other) const{
         if (length == other.length) return vertices.size() < other.vertices.size();
         return length < other.length;
+    }
+    bool operator>(const Path& other) const{
+        if (length == other.length) return vertices.size() > other.vertices.size();
+        return length > other.length;
     }
 };
 
