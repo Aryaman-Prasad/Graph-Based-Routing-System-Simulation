@@ -2,7 +2,7 @@
 #define QUERY_PROCESS_HPP
 
 #include "common.hpp"
-#include "nlohmann/json.hpp"
+#include "../nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
@@ -129,18 +129,20 @@ json process_query(json query, Graph &G){
             std::pair<double, double> p;
             p.first = query["query_point"]["lat"];
             p.second = query["query_point"]["lon"];
+
+            std::string poi = query["poi"];
             int k = query["k"];
 
             // O(V) optimization for k = 1
             if (k == 1){
-                Node* ans = nearest_node(G, p);
+                Node* ans = nearest_node(G, p, poi);
                 
                 result["id"] = query["id"];
                 result["nodes"] = {ans->getid()};
                 return result;
             }
 
-            std::vector<std::pair<Node*, double>> knn = KNN_euclidean(G, p, k);
+            std::vector<std::pair<Node*, double>> knn = KNN_euclidean(G, p, k, poi);
 
             std::vector<int> ans;
             for (auto i : knn){
@@ -160,11 +162,13 @@ json process_query(json query, Graph &G){
             int k = query["k"];
 
             // Finding nearest node of given coordinate, O(V) time
-            Node* n = nearest_node(G, p);
+            std::string poi = "any"; // Nearest node from query point can be of any poi (am I right?)
+            Node* n = nearest_node(G, p, poi);
 
             std::map<Node*, Node*> parent;
+            poi = query["poi"]; // Set poi for finding KNN
 
-            std::vector<std::pair<Node*, double>> knn = KNN_sssp(G, n, k, parent);
+            std::vector<std::pair<Node*, double>> knn = KNN_sssp(G, n, k, parent, poi);
 
             std::vector<int> ans;
             for (auto i : knn){

@@ -5,21 +5,23 @@
 // #define INF 1000000000
 // #endif
 
-std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k){
+std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi){
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp_r> unknown;
-    int n=G.V;
+    int n = G.V;
 
-    for(int i=0;i<n;i++){
-        unknown.push({G.vertices[i],G.distance(s,G.vertices[i])});
+    for(int i=0; i<n; i++){
+        if (G.vertices[i]->check_poi(poi)){
+            unknown.push({G.vertices[i], G.distance(s, G.vertices[i])});
+        }
 
-        if(unknown.size()>k){
+        if ((int) unknown.size() > k){
             unknown.pop();
         }
     }
 
-    std::vector<std::pair<Node*,double>> KNN;
+    std::vector<std::pair<Node*, double>> KNN;
 
-    while(!unknown.empty()){
+    while (!unknown.empty()){
         KNN.push_back(unknown.top());
         unknown.pop();
     }

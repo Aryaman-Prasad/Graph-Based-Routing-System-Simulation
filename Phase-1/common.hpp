@@ -23,7 +23,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
 double get_travel_time(Edge* e, double arrival_time);
 void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads);
 
-Node* nearest_node(Graph &G, std::pair<double, double> &p);
-std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent);
+Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi);
+std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent, std::string &poi);
 
-std::vector<std::pair<Node*, double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k);
+std::vector<std::pair<Node*, double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi);

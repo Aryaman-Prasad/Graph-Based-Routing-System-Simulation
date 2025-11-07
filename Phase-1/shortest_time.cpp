@@ -20,6 +20,10 @@
 
 // SUBJECT TO FURTHER CHECKING, NOT YET GUARANTEED TO BE CORRECT...
 double get_travel_time(Edge* e, double arrival_time){
+    if (e->getProfile().size() == 0){
+        return e->getTime();
+    }
+
     double dist_left = e->get_length();
     double time = 0;
 
@@ -50,7 +54,7 @@ void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std
     }
 
     // Initialization...
-    int n = G.V;
+    // int n = G.V;
 
     // sp.assign(n, INF);
     // parentassign(n, nullptr);

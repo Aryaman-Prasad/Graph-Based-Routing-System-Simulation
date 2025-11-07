@@ -17,7 +17,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
     }
 
     // Initialization...
-    int n = G.V;
+    // int n = G.V;
 
     // sp.assign(n, INF);
     // parentassign(n, nullptr);

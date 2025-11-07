@@ -7,7 +7,7 @@
 #include <queue>
 #include <cmath>
 #include <algorithm>
-#include "nlohmann/json.hpp"
+#include "../nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
@@ -19,10 +19,11 @@ class Node{
     int id;
     double lat,lon;
     bool restricted;
+    std::vector<std::string> pois;
 
 public:
     // Constructor...
-    Node(int id, double lat, double lon) : id(id), lat(lat), lon(lon), restricted(false){}
+    Node(int id, double lat, double lon, std::vector<std::string> pois) : id(id), lat(lat), lon(lon), pois(pois), restricted(false){}
 
     // Destructor...
     ~Node(){}
@@ -33,6 +34,7 @@ public:
     double get_lat();
     double get_lon();
     void updateRestriction(bool d);
+    bool check_poi(std::string poi);
 };
 
 class Edge{
@@ -58,6 +60,7 @@ public:
     Node* get_dest();
     double get_length();
     std::string getType();
+    double getTime();
     std::vector<double> getProfile();
     void update_length(double len);
     void update_avg_time(double time);
@@ -111,14 +114,5 @@ public:
     double distance(std::pair<double, double> v1,Node* v2);
 
 };
-struct path{
-    std::vector<Node*> vertices;
-    int length;
-    bool operator<(const path& other)const{
-        if(length==other.length)return vertices.size()<other.vertices.size();
-        return length<other.length;
-    }
-};
-
 
 #endif

@@ -4,16 +4,18 @@
 #define INF 1000000000
 #endif
 
-Node* nearest_node(Graph &G, std::pair<double, double> &p){
+Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi){
     double min_dist = INF;
     Node* node = nullptr;
 
     for (int i=0; i<G.V; i++){
-        double d = G.distance(p, G.vertices[i]);
+        if (poi == "any" || G.vertices[i]->check_poi(poi)){
+            double d = G.distance(p, G.vertices[i]);
 
-        if (d < min_dist){
-            min_dist = d;
-            node = G.vertices[i];
+            if (d < min_dist){
+                min_dist = d;
+                node = G.vertices[i];
+            }
         }
     }
 
@@ -21,12 +23,12 @@ Node* nearest_node(Graph &G, std::pair<double, double> &p){
 }
 
 // MINOR Changes and formatting too be  made
-std::vector<std::pair<Node*,double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
+std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent, std::string &poi){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
     std::map<Node*, double> sp;
 
     // Initialization...
-    int n = G.V;
+    // int n = G.V;
 
     // sp.assign(n, INF);
     // parentassign(n, nullptr);
@@ -50,7 +52,7 @@ std::vector<std::pair<Node*,double>> KNN_sssp(Graph &G, Node* s, int k, std::map
         //     break;
         // }
 
-        if(!M[v.first]){
+        if (!M[v.first]){
             count++;
             KNN.push_back(v);
             M[v.first] = true;
@@ -61,7 +63,7 @@ std::vector<std::pair<Node*,double>> KNN_sssp(Graph &G, Node* s, int k, std::map
         }
 
         for (Edge* e : G.adj[v.first->getid()]){ // Now its corret :D
-            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
+            if (e->get_dest()->check_poi(poi) && (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()])){
 
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
