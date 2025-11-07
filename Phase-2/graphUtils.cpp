@@ -23,6 +23,16 @@ void Node::updateRestriction(bool d){
     restricted = d;
 }
 
+bool Node::check_poi(std::string poi){
+    for (auto s : pois){
+        if (s == poi){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // EDGE Class Functions //
 int Edge::getId(){
     return id;
@@ -38,6 +48,10 @@ double Edge::get_length(){
 
 std::string Edge::getType(){
     return road_type;
+}
+
+double Edge::getTime(){
+    return avg_time;
 }
 
 std::vector<double> Edge::getProfile(){

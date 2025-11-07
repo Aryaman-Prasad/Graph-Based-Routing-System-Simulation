@@ -1,14 +1,13 @@
 #include "common.hpp"
 
-// Redundant...
-// #ifndef INF
-// #define INF 1000000000
-// #endif
+#ifndef INF
+#define INF 1000000000
+#endif
 
 // Comparison operator for priority queue
 
 
-void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as map for clarity
+void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
 
     // If source node is restricted then even god does not know what to do...
@@ -17,7 +16,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
     }
 
     // Initialization...
-    int n = G.V;
+    // int n = G.V;
 
     // sp.assign(n, INF);
     // parentassign(n, nullptr);
@@ -36,7 +35,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
         }
 
         for (Edge* e : G.adj[v.first->getid()]){ // Noe it will work :D
-            if (e->get_dest()->isRestricted() || e->isRestricted() || forbidden_roads[e->getType()]){
+            if (e->get_dest()->isRestricted() || e->isRestricted()){
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }
             

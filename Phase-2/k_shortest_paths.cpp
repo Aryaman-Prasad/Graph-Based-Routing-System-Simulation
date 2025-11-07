@@ -1,37 +1,42 @@
-#include <./graph.hpp>
-#include <./shortest_distance.cpp>
-#include <./P_path.hpp>
+#include "p_path.hpp"
 
-std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
-    std::vector<path> A;
-    std::vector<path> B;
-    std::map<path,bool> M;
+std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
+    std::vector<Path> A;
+    std::vector<Path> B;
+    std::map<Path, bool> M;
 
     std::map<Node*, double> sp;
     std::map<Node*, Node*> parent;
+
     sssp(G, start, sp, parent);
-    path first=P_path(start,dest, sp, parent);
-    if(first.vertices.empty())return {};
+
+    Path first = P_path(start, dest, sp, parent);
+    if (first.vertices.empty()){
+        return {};
+    }
 
     A.push_back(first);
-    M[first]=1;
+    M[first] = 1;
 
-    for(int i=1;i<k;i++){
-        path& X_path=A[i-1];
-        for(int j=0;j<(int)X_path.vertices.size()-1;j++){
-            auto spurNode=A[i-1].vertices[j];
-            path rootPath;
-            rootPath.vertices=std::vector<Node*> (A[i-1].vertices.begin(),A[i-1].vertices.begin()+j+1);
+    for(int i=1; i<k; i++){
+        Path& X_path = A[i-1];
 
-            rootPath.length=0.0;
+        for(int j=0; j<(int) X_path.vertices.size() - 1; j++){
+            auto spurNode = A[i-1].vertices[j];
+            Path rootPath;
+            rootPath.vertices = std::vector<Node*> (A[i-1].vertices.begin(), A[i-1].vertices.begin() + j + 1);
+
+            rootPath.length = 0.0;
+
             for (size_t t = 0; t + 1 < rootPath.vertices.size(); ++t) {
-                Node* u=rootPath.vertices[t];
-                Node* v=rootPath.vertices[t + 1];
-                bool f=false;
-                for (Edge* e:G.adj[u->getid()]) {
-                    if (e->get_dest()->getid()==v->getid()) {
-                        rootPath.length+=e->get_length();
-                        f=true;
+                Node* u = rootPath.vertices[t];
+                Node* v = rootPath.vertices[t + 1];
+                bool f = false;
+
+                for (Edge* e : G.adj[u->getid()]) {
+                    if (e->get_dest()->getid() == v->getid()) {
+                        rootPath.length += e->get_length();
+                        f = true;
                         break;
                     }
                 }
@@ -39,60 +44,81 @@ std::vector<path> KSP(Graph &G, Node* start, Node* dest, int k){
 
             std::vector<Edge*> restricted_edges;
             std::vector<Node*> restricted_nodes;
-            for(auto &p:A){
-                if(p.vertices.size()>j && rootPath.vertices==std::vector<Node*> (p.vertices.begin(),p.vertices.begin()+j+1)){
-                    Node* v1=p.vertices[j];
-                    Node* v2=p.vertices[j+1];
-                    for(auto &edge:G.adj[v1->getid()]){
-                        if(edge->get_dest()->getid()==v2->getid()){
-                            if(!edge->isRestricted())restricted_edges.push_back(edge);
+
+            for (auto &p : A){
+                if (p.vertices.size() > j && rootPath.vertices == std::vector<Node*> (p.vertices.begin(), p.vertices.begin() + j + 1)){
+                    Node* v1 = p.vertices[j];
+                    Node* v2 = p.vertices[j+1];
+
+                    for (auto &edge : G.adj[v1->getid()]){
+                        if (edge->get_dest()->getid() == v2->getid()){
+                            if (!edge->isRestricted()){
+                                restricted_edges.push_back(edge);
+                            }
+
                             edge->updateRestriction(true);
                         }
                     }
                 }
             }
-            for(auto node:rootPath.vertices){
-                if(node!=spurNode){
-                    if(!node->isRestricted())restricted_nodes.push_back(node);
+
+            for (auto node : rootPath.vertices){
+                if (node != spurNode){
+                    if (!node->isRestricted()){
+                        restricted_nodes.push_back(node);
+                    }
+
                     node->updateRestriction(true);
                 }
             }
 
             std::map<Node*, double> sp2;
             std::map<Node*, Node*> parent2;
+
             sssp(G, spurNode, sp2, parent2);
-            path spurPath =P_path(spurNode, dest, sp2,parent2);
-            if(spurPath.vertices.size()==0){
-                for(auto &x:restricted_edges){
+
+            Path spurPath = P_path(spurNode, dest, sp2,parent2);
+
+            if (spurPath.vertices.size() == 0){
+                for(auto &x : restricted_edges){
                     x->updateRestriction(false);
                 }
-                for(auto &x:restricted_nodes){
+
+                for (auto &x : restricted_nodes){
                     x->updateRestriction(false);
                 }
+
                 continue;
             }
-            path total_path;
-            total_path.vertices=rootPath.vertices;
-            total_path.vertices.insert(total_path.vertices.end(),spurPath.vertices.begin()+1,spurPath.vertices.end());
-            total_path.length=rootPath.length+spurPath.length;
-            if(M.find(total_path)==M.end()){
+
+            Path total_path;
+            total_path.vertices = rootPath.vertices;
+            total_path.vertices.insert(total_path.vertices.end(), spurPath.vertices.begin() + 1, spurPath.vertices.end());
+            total_path.length = rootPath.length + spurPath.length;
+
+            if (M.find(total_path) == M.end()){
                 B.push_back(total_path);
-                M[total_path]=1;
+                M[total_path] = 1;
             }
-            for(auto &x:restricted_edges){
+
+            for(auto &x : restricted_edges){
                 x->updateRestriction(false);
             }
-            for(auto &x:restricted_nodes){
+
+            for(auto &x : restricted_nodes){
                 x->updateRestriction(false);
             }
 
         }
-        if(B.size()==0){
+
+        if (B.size() == 0){
             break;
         }
-        std::sort(B.begin(),B.end());
+
+        std::sort(B.begin(), B.end());
         A.push_back(B.front());
         B.erase(B.begin());
     }
+
     return A;
 }
