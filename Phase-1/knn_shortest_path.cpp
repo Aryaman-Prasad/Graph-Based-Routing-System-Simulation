@@ -39,7 +39,7 @@ std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::ma
 
     sp[s] = 0.0;
     unknown.push({s, 0.0});
-    M[s] = true;
+    // M[s] = true;
 
     int count = 0;
 
@@ -52,18 +52,22 @@ std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::ma
         //     break;
         // }
 
-        if (!M[v.first]){
+        if (!M[v.first] && v.first->check_poi(poi)){
             count++;
             KNN.push_back(v);
             M[v.first] = true;
         }
 
-        if (v.second != sp[v.first]){
+        if (v.second > sp[v.first]){
             continue;
         }
 
         for (Edge* e : G.adj[v.first->getid()]){ // Now its corret :D
-            if (e->get_dest()->check_poi(poi) && (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()])){
+            if (e->isRestricted()){
+                continue;
+            }
+
+            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
 
                 // Updating shortest path
                 sp[e->get_dest()] = sp[v.first] + e->get_length();
