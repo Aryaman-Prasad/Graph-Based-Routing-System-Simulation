@@ -4,24 +4,24 @@
 #define INF 1000000000
 #endif
 
-Path P_path(Node* start, Node* dest, std::map<Node*, double>& sp, std::map<Node*, Node*>& parent) {
+Path P_path(Node* start, Node* dest, std::vector<double>& sp, std::vector<int>& parent) {
     Path path;
 
-    if (sp.find(dest) == sp.end() || sp[dest] == INF)
-        return path; // no path
+    if (sp.size()<dest->getid() || sp[dest->getid()] == INF)
+        return path; 
 
-    Node* curr = dest;
+    int curr = dest->getid();
 
-    while (curr != nullptr) {
+    while (true) {
         path.vertices.push_back(curr);
         curr = parent[curr];
-        if (curr==start) {
-            path.vertices.push_back(start);
+        if (curr==start->getid()) {
+            path.vertices.push_back(start->getid());
             break;
         }
     }
 
     std::reverse(path.vertices.begin(), path.vertices.end());
-    path.length = sp[dest];
+    path.length = sp[dest->getid()];
     return path;
 }
