@@ -17,4 +17,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
 
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k);
 
+double h(Node* s, Node* w);
+double a_sharp(Graph &G, Node* s, Node* t);
+
 #endif
