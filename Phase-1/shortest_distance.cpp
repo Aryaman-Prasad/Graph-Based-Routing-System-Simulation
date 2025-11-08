@@ -1,14 +1,13 @@
 #include "common.hpp"
 
-// Redundant...
-// #ifndef INF
-// #define INF 1000000000
-// #endif
+#ifndef INF
+#define INF 1000000000
+#endif
 
 // Comparison operator for priority queue
 
 
-void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as map for clarity
+void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as unordered_map for clarity
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
 
     // If source node is restricted then even god does not know what to do...
@@ -17,13 +16,13 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
     }
 
     // Initialization...
-    // int n = G.V;
+    int n = G.V;
 
-    // sp.assign(n, INF);
-    // parentassign(n, nullptr);
-    // Can be needed if sp and parent are defined as vectors...
+    sp.assign(n, INF);
+    parent.assign(n, -1);
+    // Now they are vectors :D
 
-    sp[s] = 0.0;
+    sp[s->getid()] = 0.0;
     unknown.push({s, 0.0});
 
     // Dijkstra...
@@ -31,7 +30,7 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
         std::pair<Node*, double> v = unknown.top();
         unknown.pop();
 
-        if (v.second != sp[v.first]){
+        if (v.second != sp[v.first->getid()]){
             continue;
         }
 
@@ -40,15 +39,15 @@ void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*>
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }
             
-            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
+            if (sp[v.first->getid()] + e->get_length() < sp[e->get_dest()->getid()]){
                 // Updating shortest path
-                sp[e->get_dest()] = sp[v.first] + e->get_length();
+                sp[e->get_dest()->getid()] = sp[v.first->getid()] + e->get_length();
 
                 // Updating parent, may be required for other purposes
-                parent[e->get_dest()] = v.first;
+                parent[e->get_dest()->getid()] = v.first->getid();
 
                 // Adding updated element into heap, deleting previous version of it is not necessary (or is it??)
-                unknown.push({e->get_dest(), sp[e->get_dest()]});
+                unknown.push({e->get_dest(), sp[e->get_dest()->getid()]});
             }
         }
     }

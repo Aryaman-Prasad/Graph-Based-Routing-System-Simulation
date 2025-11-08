@@ -30,8 +30,8 @@ json process_query(json query, Graph &G){
 
         // Minimizing distance, O(ElogE) time
         if (query["mode"] == "distance"){
-            std::map<Node*, double> sp;
-            std::map<Node*, Node*> parent;
+            std::vector<double> sp;
+            std::vector<int> parent;
             Node* s = G.vertices[query["source"]];
             std::map<std::string, bool> forbidden_roads = {{"primary" , false}, {"secondary" , false}, {"tertiary" , false}, {"local" , false}, {"expressway" , false}};
 
@@ -51,22 +51,22 @@ json process_query(json query, Graph &G){
             }
 
             result["id"] = query["id"];
-            if (query["target"] >= G.V || sp.find(G.vertices[query["target"]]) == sp.end()){
+            if (query["target"] >= G.V || sp[query["target"]] == INF){
                 result["possible"] = false; // No path exists
                 return result;
             }
 
             result["possible"] = true;
-            result["minimum_time/minimum_distance"] = sp[G.vertices[query["target"]]];
+            result["minimum_time/minimum_distance"] = sp[query["target"]];
             
             // Formation of path vector
             std::vector<int> ans;
-            Node* temp = G.vertices[query["target"]];
-            ans.push_back(temp->getid());
+            int temp = query["target"];
+            ans.push_back(temp);
 
-            while (temp->getid() != query["source"]){
+            while (temp != query["source"]){
                 temp = parent[temp];
-                ans.push_back(temp->getid());
+                ans.push_back(temp);
             }
             std::reverse(ans.begin(), ans.end());
 
@@ -76,8 +76,8 @@ json process_query(json query, Graph &G){
 
         // Minimizing time, O(ElogE) time I think, but will take more time than distance mode
         else if (query["mode"] == "time"){
-            std::map<Node*, double> arrival_time;
-            std::map<Node*, Node*> parent;
+            std::vector<double> arrival_time;
+            std::vector<int> parent;
             Node* s = G.vertices[query["source"]];
             std::map<std::string, bool> forbidden_roads = {{"primary" , false}, {"secondary" , false}, {"tertiary" , false}, {"local" , false}, {"expressway" , false}};
 
@@ -97,22 +97,22 @@ json process_query(json query, Graph &G){
             }
 
             result["id"] = query["id"];
-            if (query["target"] >= G.V || arrival_time.find(G.vertices[query["target"]]) == arrival_time.end()){
+            if (query["target"] >= G.V || arrival_time[query["target"]] == INF){
                 result["possible"] = false; // No path exists
                 return result;
             }
 
             result["possible"] = true;
-            result["minimum_time/minimum_distance"] = arrival_time[G.vertices[query["target"]]];
+            result["minimum_time/minimum_distance"] = arrival_time[query["target"]];
             
             // Formation of path vector
             std::vector<int> ans;
-            Node* temp = G.vertices[query["target"]];
-            ans.push_back(temp->getid());
+            int temp = query["target"];
+            ans.push_back(temp);
 
-            while (temp->getid() != query["source"]){
+            while (temp != query["source"]){
                 temp = parent[temp];
-                ans.push_back(temp->getid());
+                ans.push_back(temp);
             }
             std::reverse(ans.begin(), ans.end());
 

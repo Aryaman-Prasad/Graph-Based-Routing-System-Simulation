@@ -4,6 +4,10 @@
 
 #include "graph.hpp"
 
+#ifndef INF
+#define INF 1000000000
+#endif
+
 // Comparison operator for minheap (used for shortest distance, shortest time)
 struct cmp{
     bool operator()(const std::pair<Node*, double>& a, const std::pair<Node*, double>& b) const{
@@ -18,10 +22,10 @@ struct cmp_r{
     }
 };
 
-void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads);
+void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
 double get_travel_time(Edge* e, double arrival_time);
-void shortest_time(Graph &G, Node* s, std::map<Node*, double> &arrival_time, std::map<Node*, Node*> &parent, std::map<std::string, bool> &forbidden_roads);
+void shortest_time(Graph &G, Node* s, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
 Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi);
 std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent, std::string &poi);
