@@ -13,7 +13,7 @@ struct cmp{
     }
 };
 
-void sssp(Graph &G, Node* s, std::map<Node*, double> &sp, std::map<Node*, Node*> &parent);
+void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent);
 
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k);
 
