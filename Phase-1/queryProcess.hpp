@@ -30,8 +30,8 @@ json process_query(json query, Graph &G){
 
         // Minimizing distance, O(ElogE) time
         if (query["mode"] == "distance"){
-            std::vector<double> sp;
-            std::vector<int> parent;
+            std::vector<double> sp(G.V, INF);
+            std::vector<int> parent(G.V, -1);
             Node* s = G.vertices[query["source"]];
             std::map<std::string, bool> forbidden_roads = {{"primary" , false}, {"secondary" , false}, {"tertiary" , false}, {"local" , false}, {"expressway" , false}};
 
@@ -43,7 +43,9 @@ json process_query(json query, Graph &G){
                 forbidden_roads[i] = true;
             }
 
-            sssp(G, s, sp, parent, forbidden_roads);
+            int target = query["target"];
+
+            sssp(G, s, target, sp, parent, forbidden_roads);
 
             // Restoring restrictions (for nodes)
             for (int i : query["constraints"]["forbidden_nodes"]){
@@ -51,17 +53,17 @@ json process_query(json query, Graph &G){
             }
 
             result["id"] = query["id"];
-            if (query["target"] >= G.V || sp[query["target"]] == INF){
+            if (target >= G.V || sp[target] == INF){
                 result["possible"] = false; // No path exists
                 return result;
             }
 
             result["possible"] = true;
-            result["minimum_time/minimum_distance"] = sp[query["target"]];
+            result["minimum_time/minimum_distance"] = sp[target];
             
             // Formation of path vector
             std::vector<int> ans;
-            int temp = query["target"];
+            int temp = target;
             ans.push_back(temp);
 
             while (temp != query["source"]){
@@ -76,8 +78,8 @@ json process_query(json query, Graph &G){
 
         // Minimizing time, O(ElogE) time I think, but will take more time than distance mode
         else if (query["mode"] == "time"){
-            std::vector<double> arrival_time;
-            std::vector<int> parent;
+            std::vector<double> arrival_time(G.V, INF);
+            std::vector<int> parent(G.V, -1);
             Node* s = G.vertices[query["source"]];
             std::map<std::string, bool> forbidden_roads = {{"primary" , false}, {"secondary" , false}, {"tertiary" , false}, {"local" , false}, {"expressway" , false}};
 
@@ -89,7 +91,9 @@ json process_query(json query, Graph &G){
                 forbidden_roads[i] = true;
             }
 
-            shortest_time(G, s, arrival_time, parent, forbidden_roads);
+            int target = query["target"];
+
+            shortest_time(G, s, target, arrival_time, parent, forbidden_roads);
 
             // Restoring restrictions (for nodes)
             for (int i : query["constraints"]["forbidden_nodes"]){
@@ -97,17 +101,18 @@ json process_query(json query, Graph &G){
             }
 
             result["id"] = query["id"];
-            if (query["target"] >= G.V || arrival_time[query["target"]] == INF){
+
+            if (target >= G.V || arrival_time[target] == INF){
                 result["possible"] = false; // No path exists
                 return result;
             }
 
             result["possible"] = true;
-            result["minimum_time/minimum_distance"] = arrival_time[query["target"]];
+            result["minimum_time/minimum_distance"] = arrival_time[target];
             
             // Formation of path vector
             std::vector<int> ans;
-            int temp = query["target"];
+            int temp = target;
             ans.push_back(temp);
 
             while (temp != query["source"]){
@@ -142,12 +147,7 @@ json process_query(json query, Graph &G){
                 return result;
             }
 
-            std::vector<std::pair<Node*, double>> knn = KNN_euclidean(G, p, k, poi);
-
-            std::vector<int> ans;
-            for (auto i : knn){
-                ans.push_back(i.first->getid());
-            }
+            std::vector<int> ans = KNN_euclidean(G, p, k, poi);
 
             result["id"] = query["id"];
             result["nodes"] = ans;
@@ -165,15 +165,9 @@ json process_query(json query, Graph &G){
             std::string poi = "any"; // Nearest node from query point can be of any poi (am I right?)
             Node* n = nearest_node(G, p, poi);
 
-            std::map<Node*, Node*> parent;
             poi = query["poi"]; // Set poi for finding KNN
 
-            std::vector<std::pair<Node*, double>> knn = KNN_sssp(G, n, k, parent, poi);
-
-            std::vector<int> ans;
-            for (auto i : knn){
-                ans.push_back(i.first->getid());
-            }
+            std::vector<int> ans = KNN_sssp(G, n, k, poi);
 
             result["id"] = query["id"];
             result["nodes"] = ans;

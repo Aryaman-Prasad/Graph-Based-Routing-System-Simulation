@@ -5,7 +5,7 @@
 #include "graph.hpp"
 
 #ifndef INF
-#define INF 1000000000
+#define INF 10000000000.0
 #endif
 
 // Comparison operator for minheap (used for shortest distance, shortest time)
@@ -22,12 +22,12 @@ struct cmp_r{
     }
 };
 
-void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
+void sssp(Graph &G, Node* s, int &target, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
 double get_travel_time(Edge* e, double arrival_time);
-void shortest_time(Graph &G, Node* s, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
+void shortest_time(Graph &G, Node* s, int &target, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
 Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi);
-std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent, std::string &poi);
+std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi);
 
-std::vector<std::pair<Node*, double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi);
+std::vector<int> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi);

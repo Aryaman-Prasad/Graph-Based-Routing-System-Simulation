@@ -1,13 +1,14 @@
+
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000
+#define INF 10000000000
 #endif
 
 // Comparison operator for priority queue
 
 
-void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as unordered_map for clarity
+void sssp(Graph &G, Node* s, int &target, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads){ // Implementation of sp and parent is flexible, kept as unordered_map for clarity
     std::priority_queue<std::pair<double, Node*>, std::vector<std::pair<double, Node*>>, std::greater<>> unknown;
 
     // If source node is restricted then even god does not know what to do...
@@ -18,8 +19,8 @@ void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, 
     // Initialization...
     int n = G.V;
 
-    sp.assign(n, INF);
-    parent.assign(n, -1);
+    // sp.assign(n, INF);
+    // parent.assign(n, -1);
     // Now they are vectors :D
 
     sp[s->getid()] = 0.0;
@@ -29,6 +30,14 @@ void sssp(Graph &G, Node* s, std::vector<double> &sp, std::vector<int> &parent, 
     while (!unknown.empty()){
         std::pair<double, Node*> v = unknown.top();
         unknown.pop();
+
+        if (v.second->getid() == target){
+            return ;
+        }
+
+        if (v.first == INF){
+            return ;
+        }
 
         if (v.first != sp[v.second->getid()]){
             continue;

@@ -24,7 +24,7 @@ void Node::updateRestriction(bool d){
 }
 
 bool Node::check_poi(std::string poi){
-    for (auto s : pois){
+    for (std::string s : pois){
         if (s == poi){
             return true;
         }
@@ -151,19 +151,25 @@ bool Graph::modifyEdge(int edge_id, json &patch){
     // Iterating over edges w.r.t first node
     for (Edge* e : adj[vers.first]){
         if (e->getId() == edge_id){
-            e->updateRestriction(false); // Restore edge
-            m = true;
+            if (e->isRestricted()){
+                e->updateRestriction(false); // Restore edge
+                m = true;
+            }
             if (patch.find("length") != patch.end()){
                 e->update_length(patch["length"]);
+                m = true;
             }
             if (patch.find("average_time") != patch.end()){
                 e->update_avg_time(patch["average_time"]);
+                m = true;
             }
             if (patch.find("speed_profile") != patch.end()){
                 e->updateProfile(patch["speed_profile"]);
+                m = true;
             }
             if (patch.find("road_type") != patch.end()){
                 e->updateType(patch["road_type"]);
+                m = true;
             }
             break;
         }
@@ -172,19 +178,25 @@ bool Graph::modifyEdge(int edge_id, json &patch){
     // Iterating over edges w.r.t second node
     for (Edge* e : adj[vers.second]){
         if (e->getId() == edge_id){
-            e->updateRestriction(false); // Restore edge
-            m = true;
+            if (e->isRestricted()){
+                e->updateRestriction(false); // Restore edge
+                m = true;
+            }
             if (patch.find("length") != patch.end()){
                 e->update_length(patch["length"]);
+                m = true;
             }
             if (patch.find("average_time") != patch.end()){
                 e->update_avg_time(patch["average_time"]);
+                m = true;
             }
             if (patch.find("speed_profile") != patch.end()){
                 e->updateProfile(patch["speed_profile"]);
+                m = true;
             }
             if (patch.find("road_type") != patch.end()){
                 e->updateType(patch["road_type"]);
+                m = true;
             }
             break;
         }

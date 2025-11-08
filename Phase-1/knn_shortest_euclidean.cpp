@@ -2,10 +2,10 @@
 
 // Redundant...
 // #ifndef INF
-// #define INF 1000000000
+// #define INF 10000000000
 // #endif
 
-std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi){
+std::vector<int> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi){
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp_r> unknown;
     int n = G.V;
 
@@ -19,10 +19,10 @@ std::vector<std::pair<Node*,double>> KNN_euclidean(Graph &G, std::pair<double, d
         }
     }
 
-    std::vector<std::pair<Node*, double>> KNN;
+    std::vector<int> KNN;
 
     while (!unknown.empty()){
-        KNN.push_back(unknown.top());
+        KNN.push_back(unknown.top().first->getid());
         unknown.pop();
     }
     std::reverse(KNN.begin(),KNN.end());

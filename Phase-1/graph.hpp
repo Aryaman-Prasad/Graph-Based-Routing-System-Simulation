@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <queue>
 #include <cmath>
 #include <algorithm>
@@ -23,7 +23,7 @@ class Node{
 
 public:
     // Constructor...
-    Node(int id, double lat, double lon, std::vector<std::string> pois) : id(id), lat(lat), lon(lon), restricted(false),pois(pois){}
+    Node(int id, double lat, double lon, std::vector<std::string> pois) : id(id), lat(lat), lon(lon), restricted(false), pois(pois){}
 
     // Destructor...
     ~Node(){}
@@ -78,7 +78,7 @@ class Graph{
 public:
     std::vector<std::vector<Edge*>> adj; // It is now a vector :D
     std::vector<Node*> vertices;
-    std::map<int, std::pair<int, int>> edges; // Map to store edge id and their corresponding vertex id's that are connected by it
+    std::unordered_map<int, std::pair<int, int>> edges; // Map to store edge id and their corresponding vertex id's that are connected by it
     int V; // Number of vertices
     int E; // Number of edges, if required
 
@@ -114,6 +114,5 @@ public:
     double distance(std::pair<double, double> v1,Node* v2);
 
 };
-
 
 #endif

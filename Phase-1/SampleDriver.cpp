@@ -1,4 +1,4 @@
-#include "nlohmann/json.hpp"
+#include "../nlohmann/json.hpp"
 #include <iostream>
 #include <fstream>
 #include <chrono>
@@ -45,6 +45,10 @@ int main(int argc, char* argv[]) {
     json queries_json;
     queries_file >> queries_json;
 
+    // Reading events and meta separately from queries_json
+    json meta = queries_json["meta"];
+    queries_json = queries_json["events"];
+
     std::vector<json> results;
 
     for (const auto& query : queries_json) {
@@ -70,7 +74,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    json output = results;
+    // json output = results;
+
+    // Create output json in given format
+    json output;
+    output["meta"] = meta;
+    output["results"] = results;
+
     output_file << output.dump(4) << std::endl;
 
     output_file.close();

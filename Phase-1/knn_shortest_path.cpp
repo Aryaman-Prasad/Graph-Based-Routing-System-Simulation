@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000
+#define INF 10000000000
 #endif
 
 Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi){
@@ -23,21 +23,21 @@ Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi){
 }
 
 // MINOR Changes and formatting too be  made
-std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::map<Node*, Node*> &parent, std::string &poi){ // Implementation of sp and parent is flexible, kept as map for clarity
+std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi){ // Implementation of sp and parent is flexible, kept as map for clarity
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
-    std::map<Node*, double> sp;
+    std::vector<double> sp;
 
     // Initialization...
-    // int n = G.V;
+    int n = G.V;
 
-    // sp.assign(n, INF);
+    sp.assign(n, INF);
     // parentassign(n, nullptr);
-    // Can be needed if sp and parent are defined as vectors...
+    // Now its a vector :D
 
-    std::vector<std::pair<Node*, double>> KNN;
+    std::vector<int> KNN;
     std::map<Node*, bool> M;
 
-    sp[s] = 0.0;
+    sp[s->getid()] = 0.0;
     unknown.push({s, 0.0});
     // M[s] = true;
 
@@ -48,17 +48,17 @@ std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::ma
         std::pair<Node*, double> v = unknown.top();
         unknown.pop();
 
-        // if(v.second == INF){
-        //     break;
-        // }
+        if (v.second == INF){
+            return KNN;
+        }
 
         if (!M[v.first] && v.first->check_poi(poi)){
             count++;
-            KNN.push_back(v);
+            KNN.push_back(v.first->getid());
             M[v.first] = true;
         }
 
-        if (v.second > sp[v.first]){
+        if (v.second != sp[v.first->getid()]){
             continue;
         }
 
@@ -67,16 +67,16 @@ std::vector<std::pair<Node*, double>> KNN_sssp(Graph &G, Node* s, int k, std::ma
                 continue;
             }
 
-            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
+            if (sp[v.first->getid()] + e->get_length() < sp[e->get_dest()->getid()]){
 
                 // Updating shortest path
-                sp[e->get_dest()] = sp[v.first] + e->get_length();
+                sp[e->get_dest()->getid()] = sp[v.first->getid()] + e->get_length();
 
                 // Updating parent, may be required for other purposes
-                parent[e->get_dest()] = v.first;
+                // parent[e->get_dest()] = v.first;
 
                 // Adding updated element into heap, deleting previous version of it is not necessary (or is it??)
-                unknown.push({e->get_dest(), sp[e->get_dest()]});
+                unknown.push({e->get_dest(), sp[e->get_dest()->getid()]});
             }
         }
     }

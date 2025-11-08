@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000
+#define INF 10000000000
 #endif
 
 // Redundant...
@@ -51,8 +51,8 @@ double get_travel_time(Edge* e, double arrival_time){
     return time;
 }
 
-void shortest_time(Graph &G, Node* s, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads) {
-    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
+void shortest_time(Graph &G, Node* s, int &target, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads) {
+    std::priority_queue<std::pair<double, Node*>, std::vector<std::pair<double, Node*>>, std::greater<>> unknown;
 
     if (s->isRestricted()){
         return ;
@@ -61,38 +61,46 @@ void shortest_time(Graph &G, Node* s, std::vector<double> &arrival_time, std::ve
     // Initialization...
     int n = G.V;
 
-    arrival_time.assign(n, INF);
-    parent.assign(n, -1);
+    // arrival_time.assign(n, INF);
+    // parent.assign(n, -1);
     // Can be needed if sp and parent are defined as vectors...
 
     arrival_time[s->getid()] = 0.0;
-    unknown.push({s, 0.0});
+    unknown.push({0.0, s});
 
     while (!unknown.empty()){
-        std::pair<Node*, double> v = unknown.top();
+        std::pair<double, Node*> v = unknown.top();
         unknown.pop();
 
-        if (v.second != arrival_time[v.first->getid()]){
+        if (v.second->getid() == target){
+            return ;
+        }
+
+        if (v.first == INF){
+            return ;
+        }
+
+        if (v.first != arrival_time[v.second->getid()]){
             continue;
         }
 
-        for (Edge* e : G.adj[v.first->getid()]){
+        for (Edge* e : G.adj[v.second->getid()]){
             if (e->get_dest()->isRestricted() || e->isRestricted() || forbidden_roads[e->getType()]){
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }
 
-            double travel_time = get_travel_time(e, v.second);
-            double reach_time = v.second + travel_time;
+            double travel_time = get_travel_time(e, v.first);
+            double reach_time = v.first + travel_time;
             
             if (reach_time < arrival_time[e->get_dest()->getid()]){
                 // Updating shortest path
                 arrival_time[e->get_dest()->getid()] = reach_time;
 
                 // Updating parent
-                parent[e->get_dest()->getid()] = v.first->getid();
+                parent[e->get_dest()->getid()] = v.second->getid();
 
                 // Adding updated element into heap, deleting previous version of it is not necessary (or is it??)
-                unknown.push({e->get_dest(), reach_time});
+                unknown.push({reach_time, e->get_dest()});
             }
         }
     }
