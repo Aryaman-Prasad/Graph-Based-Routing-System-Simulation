@@ -9,7 +9,7 @@ using json = nlohmann::json;
 json process_query(json query, Graph &G){
     json result;
 
-    // Query for K shortest paths (exact)
+    // Query for K shortest paths (exact), idk time complexity
     if (query["type"] == "k_shortest_paths"){
         
         // Shortest paths w.r.t distance
@@ -42,6 +42,29 @@ json process_query(json query, Graph &G){
             result["paths"] = paths;
             return result;
         }
+    }
+
+    // Query for approx. shortest path
+    else if (query["type"] == "approx_shortest_path"){
+        result["id"] = query["id"];
+        std::vector<json> distances;
+
+        for (json i : query["queries"]){
+            Node* s = G.vertices[i["source"]];
+            Node* t = G.vertices[i["target"]];
+
+            double d = a_sharp(G, s, t);
+
+            json distance;
+            distance["source"] = i["source"];
+            distance["target"] = i["target"];
+            distance["approx_shortest_distance"] = d;
+
+            distances.push_back(distance);
+        }
+
+        result["distances"] = distances;
+        return result;
     }
     
     // No other possible input should exist
