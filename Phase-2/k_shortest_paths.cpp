@@ -12,10 +12,10 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     std::priority_queue<Path,std::vector<Path>,Pathcmp> B;
     std::map<Path, bool> M;
 
-    std::map<Node*, double> sp;
-    std::map<Node*, Node*> parent;
+    std::vector<double> sp;
+    std::vector<int> parent;
 
-    sssp(G, start, sp, parent);
+    sssp(G, start, dest->getid(),sp, parent);
 
     Path first = P_path(start, dest, sp, parent);
     if (first.vertices.empty()){
@@ -38,13 +38,13 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
         for(int j=0; j<(int) X_path.vertices.size() - 1; j++){
             auto spurNode = A[i-1].vertices[j];
             Path rootPath;
-            rootPath.vertices = std::vector<Node*> (A[i-1].vertices.begin(), A[i-1].vertices.begin() + j + 1);
+            rootPath.vertices = std::vector<int> (A[i-1].vertices.begin(), A[i-1].vertices.begin() + j + 1);
 
             rootPath.length = 0.0;
 
             for (size_t t = 0; t + 1 < rootPath.vertices.size(); ++t) {
-                int u = rootPath.vertices[t]->getid();
-                int v = rootPath.vertices[t + 1]->getid();
+                int u = rootPath.vertices[t];
+                int v = rootPath.vertices[t + 1];
                 rootPath.length+=edge_lengths[u][v];
             }
 
@@ -52,12 +52,12 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             std::vector<Node*> restricted_nodes;
 
             for (auto &p : A){
-                if (p.vertices.size() > j && rootPath.vertices == std::vector<Node*> (p.vertices.begin(), p.vertices.begin() + j + 1)){
-                    Node* v1 = p.vertices[j];
-                    Node* v2 = p.vertices[j+1];
+                if (p.vertices.size() > j && rootPath.vertices == std::vector<int> (p.vertices.begin(), p.vertices.begin() + j + 1)){
+                    int v1 = p.vertices[j];
+                    int v2 = p.vertices[j+1];
 
-                    for (auto &edge : G.adj[v1->getid()]){
-                        if (edge->get_dest()->getid() == v2->getid()){
+                    for (auto &edge : G.adj[v1]){
+                        if (edge->get_dest()->getid() == v2){
                             if (!edge->isRestricted()){
                                 restricted_edges.push_back(edge);
                             }
@@ -70,20 +70,20 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
 
             for (auto node : rootPath.vertices){
                 if (node != spurNode){
-                    if (!node->isRestricted()){
-                        restricted_nodes.push_back(node);
+                    if (!G.vertices[node]->isRestricted()){
+                        restricted_nodes.push_back(G.vertices[node]);
                     }
 
-                    node->updateRestriction(true);
+                    G.vertices[node]->updateRestriction(true);
                 }
             }
 
-            std::map<Node*, double> sp2;
-            std::map<Node*, Node*> parent2;
+            std::vector<double> sp2;
+            std::vector<int> parent2;
 
-            sssp(G, spurNode, sp2, parent2);
+            sssp(G, G.vertices[spurNode], dest->getid(), sp2, parent2);
 
-            Path spurPath = P_path(spurNode, dest, sp2,parent2);
+            Path spurPath = P_path(G.vertices[spurNode], dest, sp2,parent2);
 
             if (spurPath.vertices.size() == 0){
                 for(auto &x : restricted_edges){
