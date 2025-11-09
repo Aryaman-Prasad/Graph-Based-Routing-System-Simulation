@@ -116,7 +116,7 @@ public:
 };
 
 struct Path{
-    std::vector<Node*> vertices;
+    std::vector<int> vertices;
     double length;
 
     bool operator<(const Path& other) const{
@@ -131,3 +131,4 @@ struct Path{
 
 
 #endif
+
