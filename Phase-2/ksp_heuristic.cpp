@@ -140,7 +140,6 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
             break;
         }
     }
-    std::cout<<lowest.size()<<std::endl;
 
     //Calculate penalty
     for (int i=0; i<lowest.size(); i++) {
@@ -160,4 +159,5 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     }
 
     return lowest;
+
 }
