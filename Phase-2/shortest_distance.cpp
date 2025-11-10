@@ -4,23 +4,13 @@
 #define INF 10000000000
 #endif
 
-// Comparison operator for priority queue
-
-
-void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent){ // Implementation of sp and parent is flexible, kept as unordered_map for clarity
+void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent){ // They are now vectors haha
     std::priority_queue<std::pair<double, Node*>, std::vector<std::pair<double, Node*>>, std::greater<>> unknown;
 
     // If source node is restricted then even god does not know what to do...
     if (s->isRestricted()){
         return ;
     }
-
-    // Initialization...
-    int n = G.V;
-
-    // sp.assign(n, INF);
-    // parent.assign(n, -1);
-    // Now they are vectors :D
 
     sp[s->getid()] = 0.0;
     unknown.push({0.0,s});
@@ -55,7 +45,7 @@ void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<in
                 parent[e->get_dest()->getid()] = v.second->getid();
 
                 // Adding updated element into heap, deleting previous version of it is not necessary (or is it??)
-                unknown.push({ sp[e->get_dest()->getid()],e->get_dest()});
+                unknown.push({sp[e->get_dest()->getid()], e->get_dest()});
             }
         }
     }

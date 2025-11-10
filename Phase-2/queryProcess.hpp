@@ -25,16 +25,10 @@ json process_query(json query, Graph &G){
 
             std::vector<json> paths;
 
-            for (Path p : A){
+            for (Path &p : A){
                 json temp;
                 temp["length"] = p.length;
-                std::vector<int> nodes;
-
-                for (auto n : p.vertices){
-                    nodes.push_back(n->getid());
-                }
-
-                temp["path"] = nodes;
+                temp["path"] = p.vertices;
                 paths.push_back(temp);
             }
 
@@ -44,7 +38,35 @@ json process_query(json query, Graph &G){
         }
     }
 
-    // Query for approx. shortest path
+    // Query for K shortest path (heuristic), idk time complexity
+    else if (query["type"] == "k_shortest_paths_heuristic"){
+        int s = query["source"];
+        int e = query["target"];
+        int k = query["k"];
+        double t = ((double) query["overlap_threshold"]) / 100;
+        double penalty = 0.0;
+
+        Node* start = G.vertices[s];
+        Node* end = G.vertices[e];
+
+        std::vector<Path> lowest = KSP_heuristic(G, start, end, k, t, penalty);
+
+        std::vector<json> paths;
+
+        for (Path &p : lowest){
+            json path;
+            path["length"] = p.length;
+            path["path"] = p.vertices;
+
+            paths.push_back(path);
+        }
+
+        result["id"] = query["id"];
+        result["paths"] = paths;
+        return result;
+    }
+
+    // Query for approx. shortest path, idk time complexity
     else if (query["type"] == "approx_shortest_path"){
         result["id"] = query["id"];
         std::vector<json> distances;
@@ -65,6 +87,23 @@ json process_query(json query, Graph &G){
 
         result["distances"] = distances;
         return result;
+
+        // result["id"] = query["id"];
+        // std::vector<json> distances;
+
+        // for (json i : query["queries"]){
+        //     double d = approx_dist(ref_sssp, G.vertices[i["source"]], G.vertices[i["target"]]);
+
+        //     json distance;
+        //     distance["source"] = i["source"];
+        //     distance["target"] = i["target"];
+        //     distance["approx_shortest_distance"] = d;
+
+        //     distances.push_back(distance);
+        // }
+
+        // result["distances"] = distances;
+        // return result;
     }
     
     // No other possible input should exist

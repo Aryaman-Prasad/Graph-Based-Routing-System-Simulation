@@ -5,55 +5,57 @@
 #endif
 
 double h(Node* s, Node* w){
-    return (abs(s->get_lat() - w->get_lat()) + abs(s->get_lon() - w->get_lon()));
+    double dx = (s->get_lat() - w->get_lat());
+    double dy = (s->get_lon() - w->get_lon());
+    return sqrt(dx*dx + dy*dy);
 }
 
 double a_sharp(Graph &G, Node* s, Node* t){ // Implementation of sp and parent is flexible, kept as map for clarity
-    std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp> unknown;
-    std::map<Node*, double> sp;
+    std::priority_queue<std::pair<double, Node*>, std::vector<std::pair<double, Node*>>, std::greater<>> unknown;
+    std::vector<double> sp(G.V, INF);
 
     // If source node is restricted then even god does not know what to do...
     if (s->isRestricted()){
         return INF;
     }
 
-    sp[s] = 0.0;
-    unknown.push({s, 0.0});
+    sp[s->getid()] = 0.0;
+    unknown.push({0.0 + h(s, t), s});
 
     // A Sharp...
     while (!unknown.empty()){
-        std::pair<Node*, double> v = unknown.top();
+        std::pair<double, Node*> v = unknown.top();
         unknown.pop();
 
-        if (v.first->getid() == t->getid()){
-            return sp[t];
+        if (v.second->getid() == t->getid()){
+            return sp[t->getid()];
         }
 
-        if (v.second != sp[v.first] + h(s, v.first)){
+        if (v.first == INF){
+            return INF;
+        }
+
+        if (v.first != sp[v.second->getid()] + h(t, v.second)){
             continue;
         }
 
-        for (Edge* e : G.adj[v.first->getid()]){ // Noe it will work :D
+        for (Edge* e : G.adj[v.second->getid()]){ // Noe it will work :D
             if (e->get_dest()->isRestricted() || e->isRestricted()){
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }
             
-            if (sp.find(e->get_dest()) == sp.end() || sp[v.first] + e->get_length() < sp[e->get_dest()]){
+            if (sp[v.second->getid()] + e->get_length() < sp[e->get_dest()->getid()]){
                 // Updating shortest path
-                sp[e->get_dest()] = sp[v.first] + e->get_length();
+                sp[e->get_dest()->getid()] = sp[v.second->getid()] + e->get_length();
 
                 // Updating parent, may be required for other purposes
                 // parent[e->get_dest()] = v.first;
 
                 // Adding updated element into heap, deleting previous version of it is not necessary (or is it??)
-                unknown.push({e->get_dest(), sp[e->get_dest()] + h(s, e->get_dest())});
+                unknown.push({sp[e->get_dest()->getid()] + h(t, e->get_dest()), e->get_dest()});
             }
         }
     }
 
-    if (sp.find(t) == sp.end()){
-        return INF;
-    }
-
-    return sp[t];
+    return sp[t->getid()];
 }

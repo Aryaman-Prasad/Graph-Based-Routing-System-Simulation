@@ -1,31 +1,25 @@
-#include "p_path.hpp"
-
-struct Pathcmp{
-    bool operator()(const Path &a, const Path &b) const {
-        return a.length > b.length; 
-    }
-};
-
+#include "common.hpp"
 
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     std::vector<Path> A;
-    std::priority_queue<Path,std::vector<Path>,Pathcmp> B;
+    std::priority_queue<Path, std::vector<Path>, Pathcmp> B;
     std::map<Path, bool> M;
 
-    std::vector<double> sp;
-    std::vector<int> parent;
+    std::vector<double> sp(G.V, INF);
+    std::vector<int> parent(G.V, -1);
 
-    sssp(G, start, dest->getid(),sp, parent);
+    sssp(G, start, dest->getid(), sp, parent);
 
     Path first = P_path(start, dest, sp, parent);
+
     if (first.vertices.empty()){
         return {};
     }
 
     std::vector<std::unordered_map<int,double>> edge_lengths(G.V);
-    for(int i=0;i<G.V;i++){
+    for(int i=0; i<G.V; i++){
         for(Edge* e:G.adj[i]){
-            edge_lengths[i][e->get_dest()->getid()]=e->get_length();
+            edge_lengths[i][e->get_dest()->getid()] = e->get_length();
         }
     }
 
@@ -45,7 +39,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             for (size_t t = 0; t + 1 < rootPath.vertices.size(); ++t) {
                 int u = rootPath.vertices[t];
                 int v = rootPath.vertices[t + 1];
-                rootPath.length+=edge_lengths[u][v];
+                rootPath.length += edge_lengths[u][v];
             }
 
             std::vector<Edge*> restricted_edges;
@@ -78,12 +72,12 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
                 }
             }
 
-            std::vector<double> sp2;
-            std::vector<int> parent2;
+            std::vector<double> sp2(G.V, INF);
+            std::vector<int> parent2(G.V, -1);
 
             sssp(G, G.vertices[spurNode], dest->getid(), sp2, parent2);
 
-            Path spurPath = P_path(G.vertices[spurNode], dest, sp2,parent2);
+            Path spurPath = P_path(G.vertices[spurNode], dest, sp2, parent2);
 
             if (spurPath.vertices.size() == 0){
                 for(auto &x : restricted_edges){

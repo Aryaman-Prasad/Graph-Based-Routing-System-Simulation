@@ -4,7 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <queue>
+#include <set>
 #include <cmath>
 #include <algorithm>
 #include "../nlohmann/json.hpp"
@@ -120,15 +122,18 @@ struct Path{
     double length;
 
     bool operator<(const Path& other) const{
-        if (length == other.length) return vertices.size() < other.vertices.size();
+        if (length == other.length) {
+            return vertices.size() < other.vertices.size();
+        }
         return length < other.length;
     }
     bool operator>(const Path& other) const{
-        if (length == other.length) return vertices.size() > other.vertices.size();
+        if (length == other.length) {
+            return vertices.size() > other.vertices.size();
+        }
         return length > other.length;
     }
 };
 
 
 #endif
-
