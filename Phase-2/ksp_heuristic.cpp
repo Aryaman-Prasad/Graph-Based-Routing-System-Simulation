@@ -38,7 +38,7 @@ void init_Heap(Graph& G, int pos, Path& p, std::map<int, std::priority_queue<std
 
         for (Edge* e : G.adj[u->getid()]) {
             if (e->get_dest()->getid() == v->getid() && !e->isRestricted()) {
-                H[0].push({e->get_length(), e});
+                H[pos].push({e->get_length(), e});
             }
         }
     }
@@ -161,3 +161,4 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     return lowest;
 
 }
+
