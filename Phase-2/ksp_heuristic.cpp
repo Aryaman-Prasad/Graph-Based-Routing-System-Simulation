@@ -1,5 +1,9 @@
 #include "common.hpp"
 
+#ifndef INF
+#define INF 1000000000
+#endif
+
 bool sim(Graph& G, Path &p1, Path &p2, double threshold) {
     int n = p1.vertices.size() <= p2.vertices.size() ? p1.vertices.size() : p2.vertices.size();
     int n1 = p1.vertices.size();
@@ -49,8 +53,9 @@ Path shortest_path(Graph& G, Node* start, Node* dest) {
     std::vector<int> parent(G.V, -1);
 
     sssp(G, start, dest->getid(), sp, parent);
-
-    Path path = P_path(start, dest, sp, parent);
+    Path path;
+    if (sp[dest->getid()]==INF) {return path;}
+    path = P_path(start, dest, sp, parent);
     return path;
 }
 
@@ -99,10 +104,8 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
                     break;
                 }
             }
-            if (!found) {
-                e->updateRestriction(true);
-            }
-
+            if (found) {continue;}
+            e->updateRestriction(true);
             //Calculate shortest path without the above edge
             Path new_sp = shortest_path(G, start, dest);
             
@@ -161,4 +164,5 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     return lowest;
 
 }
+
 
