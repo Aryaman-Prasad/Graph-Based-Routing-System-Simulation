@@ -25,3 +25,12 @@ Path P_path(Node* start, Node* dest, std::vector<double>& sp, std::vector<int>& 
     path.length = sp[dest->getid()];
     return path;
 }
+
+std::string path_string(const std::vector<int>& vertices){
+    std::string s;
+    for(size_t i=0;i<vertices.size();i++){
+        if(i)s+=',';
+        s+=std::to_string(vertices[i]);
+    }
+    return s;
+}

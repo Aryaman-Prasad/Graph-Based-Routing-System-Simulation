@@ -24,6 +24,7 @@ struct Pathcmp{
 };
 
 Path P_path(Node* start, Node* dest, std::vector<double>& sp, std::vector<int>& parent);
+std::string path_string(const std::vector<int>& vertices);
 
 void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent);
 
