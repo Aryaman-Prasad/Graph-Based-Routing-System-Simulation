@@ -1,11 +1,10 @@
 #include "common.hpp"
 
-
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     std::vector<Path> A;
     std::priority_queue<Path, std::vector<Path>, Pathcmp> B;
-    std::unordered_set<std::string> M;
-    M.reserve(2*k);
+    std::map<Path, bool> M;
+
     std::vector<double> sp(G.V, INF);
     std::vector<int> parent(G.V, -1);
 
@@ -25,7 +24,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
     }
 
     A.push_back(first);
-    M.insert(path_string(first.vertices));
+    M[first] = 1;
 
     for(int i=1; i<k; i++){
         Path& X_path = A[i-1];
@@ -33,8 +32,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
         for(int j=0; j<(int) X_path.vertices.size() - 1; j++){
             auto spurNode = A[i-1].vertices[j];
             Path rootPath;
-            rootPath.vertices.reserve(j+1);
-            rootPath.vertices.assign(A[i-1].vertices.begin(), A[i-1].vertices.begin() + j + 1);
+            rootPath.vertices = std::vector<int> (A[i-1].vertices.begin(), A[i-1].vertices.begin() + j + 1);
 
             rootPath.length = 0.0;
 
@@ -48,7 +46,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             std::vector<Node*> restricted_nodes;
 
             for (auto &p : A){
-                if (p.vertices.size() > j && std::equal(rootPath.vertices.begin(), rootPath.vertices.end(), p.vertices.begin())){
+                if (p.vertices.size() > j && rootPath.vertices == std::vector<int> (p.vertices.begin(), p.vertices.begin() + j + 1)){
                     int v1 = p.vertices[j];
                     int v2 = p.vertices[j+1];
 
@@ -81,7 +79,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
 
             Path spurPath = P_path(G.vertices[spurNode], dest, sp2, parent2);
 
-            if (spurPath.vertices.empty()){
+            if (spurPath.vertices.size() == 0){
                 for(auto &x : restricted_edges){
                     x->updateRestriction(false);
                 }
@@ -94,15 +92,13 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             }
 
             Path total_path;
-            total_path.vertices.reserve(rootPath.vertices.size() + spurPath.vertices.size());
             total_path.vertices = rootPath.vertices;
             total_path.vertices.insert(total_path.vertices.end(), spurPath.vertices.begin() + 1, spurPath.vertices.end());
             total_path.length = rootPath.length + spurPath.length;
 
-            std::string find_mp=path_string(total_path.vertices);
-            if (M.find(find_mp) == M.end()){
-                B.push(std::move(total_path));
-                M.insert(std::move(find_mp));
+            if (M.find(total_path) == M.end()){
+                B.push(total_path);
+                M[total_path] = 1;
             }
 
             for(auto &x : restricted_edges){
@@ -115,7 +111,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
 
         }
 
-        if (B.empty()){
+        if (B.size() == 0){
             break;
         }
 
