@@ -19,8 +19,8 @@ Solution getInitialSolution(Graph& G, int m, std::vector<Order> orders, Node* de
     }
     // Register mapping
     for (int idx = 0; idx < s.orders.size(); idx++) {
-        s.pickup_to_order[G.getNode(s.orders[idx].pickup)] = idx;
-        s.delivery_to_order[G.getNode(s.orders[idx].delivery)] = idx;
+        s.pickup_to_order[G.getNode(s.orders[idx].pickup)] = s.orders[idx].id;
+        s.delivery_to_order[G.getNode(s.orders[idx].delivery)] = s.orders[idx].id;
     }
     // CHEAPEST INSERTION for each order
     for (auto& ord : s.orders) {
