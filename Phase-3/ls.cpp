@@ -8,20 +8,37 @@
 struct Order {
     int pickup;
     int delivery;
-    double pickup_load;
-    double delivery_load;
+    double load;
 };
 
 class Solution {
 public:
     double cost = 0.0;
     std::vector<Path*> routes;
-    std::unordered_map<int, int> pickup_to_order;  
-    std::unordered_map<int, int> delivery_to_order;
+    std::unordered_map<Node*, int> pickup_to_order;  
+    std::unordered_map<Node*, int> delivery_to_order;
     std::vector<Order> orders;
+
     double getCost(Graph& G) {
-        //TODO: Calculate total time taken across all routes
-        return cost;
+        double total = 0.0;
+        for (auto& pathPtr : routes) {
+            auto& route = pathPtr->vertices;
+            for (int i = 0; i + 1 < (int)route.size(); i++) {
+                Node* u = route[i];
+                Node* v = route[i+1];
+                bool found = false;
+                double best = INF;
+                // Find if edge exists directly
+                for (Edge* e : G.adj[u->getid()]) {
+                    if (e->get_dest()->getid() == v->getid()) {
+                        best = std::min(best, e->getTime());
+                        found = true;
+                    }
+                }
+            }
+        }
+        cost = total;
+        return total;
     }
 };
 
@@ -55,8 +72,9 @@ bool IntraRoute2Opt(Solution& s, Graph& G) {
                     if (newCost < cost) {
                         improved = true;
                     }
+                    else {std::reverse(route->vertices.begin()+i, route->vertices.begin()+j+1);}
                 }
-                std::reverse(route->vertices.begin()+i, route->vertices.begin()+j+1);
+                else {std::reverse(route->vertices.begin()+i, route->vertices.begin()+j+1);}
             }
         }
     }
@@ -69,6 +87,7 @@ bool IntraRouteReinsertion(Solution& s, Graph& G) {
     for (auto& route : s.routes) {
         int n = route->vertices.size();
         double cost = s.getCost(G);
+        bool improved_now = false;
 
         for (int i = 1; i < n-1; i++) {
             Node* node = route->vertices[i];
@@ -78,13 +97,14 @@ bool IntraRouteReinsertion(Solution& s, Graph& G) {
                 route->vertices.insert(route->vertices.begin() + j, node);
                 if (isRouteFeasible(route->vertices, s)) {
                     double newCost = s.getCost(G);
-                    if (newCost < cost) {improved = true;}
+                    if (newCost < cost) {improved_now = true;}
+                    else {route->vertices.erase(route->vertices.begin() + j);}
                 }
-                route->vertices.erase(route->vertices.begin() + j);
+                else {route->vertices.erase(route->vertices.begin() + j);}
             }
-
-            route->vertices.insert(route->vertices.begin() + i, node);
+            if (!improved_now) {route->vertices.insert(route->vertices.begin() + i, node);}
         }
+        improved |= improved_now;
     }
     return improved;
 }
@@ -112,31 +132,25 @@ bool IntraRouteSwap(Solution& s, Graph& G) {
 }
 
 bool InterRouteReinsertion(Solution& s, Graph& G) {
-
     for (int ra = 0; ra < s.routes.size(); ra++) {
         auto& routeA = s.routes[ra]->vertices;
         for (int i = 0; i < routeA.size(); i++) {
             Node* u = routeA[i];
             for (int rb = 0; rb < s.routes.size(); rb++) {
                 if (rb == ra) continue;
-                auto& routeB = s.routes[ra]->vertices;
+                auto& routeB = s.routes[rb]->vertices;
                 // Try inserting u into every position of route rb
                 for (int j = 0; j <= routeB.size(); j++) {
-
                     // Transfer from ra to rb
                     routeA.erase(routeA.begin() + i);
                     routeB.insert(routeB.begin() + j, u);
-
-                    // Check P→D feasibility on both routes
-                    if (!isRouteFeasible(routeA, s))
-                        continue;
-                    if (!isRouteFeasible(routeB, s))
-                        continue;
-                    // Passed constraints → accept move and update solution
-                    s.routes[ra]->vertices = std::move(routeA);
-                    s.routes[rb]->vertices = std::move(routeB);
-                    s.cost = s.getCost(G);
-                    return true; // one improvement or one random move depending on your design
+                    if (isRouteFeasible(routeA, s) && isRouteFeasible(routeB, s)) {
+                        s.cost = s.getCost(G);
+                        return true;
+                    }
+                    // Undo move
+                    routeB.erase(routeB.begin() + j);
+                    routeA.insert(routeA.begin() + i, u);
                 }
             }
         }
@@ -151,22 +165,17 @@ bool InterRouteSwap(Solution& s, Graph& G) {
             Node* u = routeA[i];
             for (int rb = 0; rb < s.routes.size(); rb++) {
                 if (rb == ra) continue;
-                auto& routeB = s.routes[ra]->vertices;
+                auto& routeB = s.routes[rb]->vertices;
                 // Try inserting u into every position of route rb
                 for (int j = 0; j <= routeB.size(); j++) {
-
                     std::swap(routeA[i],routeB[j]);
-
-                    // Check P→D feasibility on both routes
-                    if (!isRouteFeasible(routeA, s))
-                        continue;
-                    if (!isRouteFeasible(routeB, s))
-                        continue;
-                    // Passed constraints → accept move and update solution
-                    s.routes[ra]->vertices = std::move(routeA);
-                    s.routes[rb]->vertices = std::move(routeB);
-                    s.cost = s.getCost(G);
-                    return true; // one improvement or one random move depending on your design
+                    if (isRouteFeasible(routeA, s) && isRouteFeasible(routeB, s)) {
+                        s.cost = s.getCost(G);
+                        return true;
+                    }
+                    // Undo move
+                    routeB.erase(routeB.begin() + j);
+                    routeA.insert(routeA.begin() + i, u);
                 }
             }
         }
