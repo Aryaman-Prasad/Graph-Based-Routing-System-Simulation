@@ -32,15 +32,7 @@ private:
     void updateCost(Solution& s);
 };
 
-
-//TODO: Model the m orders with their pickup and delivery spots as a graph
-//All pickup spots must be reached before the corresponding delivery spots
-//Do it under json processing
-void createGraph(Graph& G, int n, int m) {
-
-}
-
-Solution getInitialSolution(Graph& G, int n, std::vector<Node*> checkpoints) {
+Solution getInitialSolution(Graph& G, int n, std::map<int,int> checkpoints) {
     Solution s;
     //TODO: Find best set of routes greedily
     return s;
@@ -57,7 +49,7 @@ void perturb(Graph& G, Solution& s, int n) {
 }
 
 //Don't transfer Solution objects around, maybe use pointers instead
-Solution vrpspd(Graph& G, int n, int max_iter, std::vector<Node*> checkpoints) {
+Solution vrpspd(Graph& G, int n, int max_iter, std::map<int,int> checkpoints) {
     Solution best = getInitialSolution(G, n, checkpoints);
     //RVND(best);
 
