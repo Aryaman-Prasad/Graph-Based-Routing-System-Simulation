@@ -56,7 +56,7 @@ void perturb(Graph& G, Solution& s, int n) {
     //TODO: Fill this perturbation function
 }
 
-
+//Don't transfer Solution objects around, maybe use pointers instead
 Solution vrpspd(Graph& G, int n, int max_iter, std::vector<Node*> checkpoints) {
     Solution best = getInitialSolution(G, n, checkpoints);
     //RVND(best);
