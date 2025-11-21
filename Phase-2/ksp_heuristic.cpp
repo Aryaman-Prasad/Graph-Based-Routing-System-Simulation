@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000
+#define INF std::numeric_limits<double>::max()
 #endif
 
 bool sim(Graph& G, Path &p1, Path &p2, double threshold) {

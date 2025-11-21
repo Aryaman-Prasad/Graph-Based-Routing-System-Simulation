@@ -6,7 +6,7 @@
 #define COMMON_H
 
 #ifndef INF
-#define INF 1000000000.0
+#define INF std::numeric_limits<double>::max()
 #endif
 
 #include "graph.hpp"

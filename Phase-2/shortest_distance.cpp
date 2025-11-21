@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 10000000000
+#define INF std::numeric_limits<double>::max()
 #endif
 
 void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent){ // They are now vectors haha

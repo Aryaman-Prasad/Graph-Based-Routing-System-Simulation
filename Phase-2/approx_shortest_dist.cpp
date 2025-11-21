@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000.0
+#define INF std::numeric_limits<double>::max()
 #endif
 
 double h(Node* s, Node* w){
