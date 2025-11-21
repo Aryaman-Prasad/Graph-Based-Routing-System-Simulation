@@ -5,7 +5,7 @@
 #include "graph.hpp"
 
 #ifndef INF
-#define INF 10000000000.0
+#define INF std::numeric_limits<double>::max()
 #endif
 
 // Comparison operator for minheap (used for shortest distance, shortest time)

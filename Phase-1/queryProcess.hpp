@@ -4,6 +4,10 @@
 #include "common.hpp"
 #include "../nlohmann/json.hpp"
 
+#ifndef INF
+#define INF std::numeric_limits<double>::max()
+#endif
+
 using json = nlohmann::json;
 
 json process_query(json query, Graph &G){

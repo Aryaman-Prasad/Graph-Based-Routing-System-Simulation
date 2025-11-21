@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 10000000000
+#define INF std::numeric_limits<double>::max()
 #endif
 
 Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi){

@@ -2,7 +2,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 10000000000
+#define INF std::numeric_limits<double>::max()
 #endif
 
 // Comparison operator for priority queue

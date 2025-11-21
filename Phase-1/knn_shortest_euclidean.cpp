@@ -1,9 +1,5 @@
 #include "common.hpp"
 
-// Redundant...
-// #ifndef INF
-// #define INF 10000000000
-// #endif
 
 std::vector<int> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi){
     std::priority_queue<std::pair<Node*, double>, std::vector<std::pair<Node*, double>>, cmp_r> unknown;
