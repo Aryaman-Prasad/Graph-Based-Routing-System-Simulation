@@ -8,7 +8,7 @@
 struct Order {
     int pickup;
     int delivery;
-    double load;
+    int id;
 };
 
 class Solution {
