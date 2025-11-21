@@ -25,7 +25,7 @@ void RVND(Solution& s, Graph& G) {
             else if (nh == 2) {ok = IntraRouteReinsertion(s, G);}
             else if (nh == 3) {ok = IntraRoute2Opt(s, G);}
             else if (nh==4) {ok = InterRouteSwap(s, G);}
-            else if (nh==5) {ok = IntraRouteReinsertion(s, G);}
+            else if (nh==5) {ok = InterRouteReinsertion(s, G);}
 
             if (ok) {
                 improved = true;
