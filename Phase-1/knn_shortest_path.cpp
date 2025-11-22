@@ -61,7 +61,7 @@ std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi){ // Implem
         }
 
         for (Edge* e : G.adj[v.first->getid()]){ // Now its corret :D
-            if (e->isRestricted()){
+            if (e->isRestricted() || e->get_dest()->isRestricted()){
                 continue;
             }
 
@@ -80,4 +80,5 @@ std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi){ // Implem
     }
 
     return KNN;
+
 }
