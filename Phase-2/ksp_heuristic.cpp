@@ -4,7 +4,7 @@
 #define INF std::numeric_limits<double>::max()
 #endif
 
-bool sim(Graph& G, Path &p1, Path &p2, double threshold) {
+bool sim(Path &p1, Path &p2, double threshold) {
     int n = p1.vertices.size() <= p2.vertices.size() ? p1.vertices.size() : p2.vertices.size();
     int n1 = p1.vertices.size();
     int n2 = p2.vertices.size();
@@ -80,7 +80,7 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     //Initialize min-heap of edges of shortest path
     init_Heap(G, 0, first, H);
 
-    while (lowest.size()<k) {
+    while ((int)lowest.size()<k) {
         //Choose the latest path added to lowest, and pop its smallest edge
         auto& h = H[lowest.size()-1];
         if (h.empty()) {
@@ -117,7 +117,7 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
 
             bool valid = true;
             for (auto& p : lowest) {
-                if (!sim(G, new_sp, p, threshold)) {
+                if (!sim(new_sp, p, threshold)) {
                     valid = false;
                     break;
                 }
@@ -151,7 +151,7 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
             if (j == i) {
                 continue;
             }
-            if (!sim(G, lowest[i], lowest[j], threshold)) {
+            if (!sim(lowest[i], lowest[j], threshold)) {
                 overlap++;
             }
         }

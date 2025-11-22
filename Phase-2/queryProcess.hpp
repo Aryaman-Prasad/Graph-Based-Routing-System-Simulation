@@ -6,7 +6,7 @@
 
 using json = nlohmann::json;
 
-json process_query(json query, Graph &G, std::vector<std::vector<double>> &ref_sssp){
+json process_query(json query,Graph &G, std::vector<std::vector<double>> &ref_sssp,const std::vector<std::vector<double>> &edge_lengths){
     json result;
 
     try{
@@ -22,7 +22,7 @@ json process_query(json query, Graph &G, std::vector<std::vector<double>> &ref_s
                 Node* start = G.vertices[s];
                 Node* dest = G.vertices[e];
 
-                std::vector<Path> A = KSP(G, start, dest, k);
+                std::vector<Path> A = KSP(G, start, dest, k,edge_lengths);
 
                 std::vector<json> paths;
 
@@ -115,7 +115,7 @@ json process_query(json query, Graph &G, std::vector<std::vector<double>> &ref_s
         result["error"] = e;
         return result;
     }
-
+    return result;
 }
 
 #endif

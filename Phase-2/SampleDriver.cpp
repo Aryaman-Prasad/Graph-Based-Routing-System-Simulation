@@ -37,9 +37,9 @@ int main(int argc, char* argv[]) {
     process_graph(graph_json, G);
 
     // // Preprocessing for approx_dist
-    // std::vector<std::vector<double>> ref_sssp;
-    // double e = 0.05;
-    // error_bound_dist(G, e, ref_sssp);
+    std::vector<std::vector<double>> ref_sssp;
+    double e = 0.05;
+    error_bound_dist(G, e, ref_sssp);
 
 
     // Read queries from second file
@@ -56,7 +56,12 @@ int main(int argc, char* argv[]) {
     queries_json = queries_json["events"];
 
     std::vector<json> results;
-
+    std::vector<std::vector<double>> edge_lengths(G.V,std::vector<double> (G.V));
+    for(int i=0; i<G.V; i++){
+        for(Edge* e:G.adj[i]){
+            edge_lengths[i][e->get_dest()->getid()] = e->get_length();
+        }
+    }
     for (const auto& query : queries_json) {
         auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -67,7 +72,7 @@ int main(int argc, char* argv[]) {
 
         // Answer each query replacing the function process_query using 
         // whatever function or class methods that you have implemented
-        json result = process_query(query, G);
+        json result = process_query(query, G,ref_sssp,edge_lengths);
 
         auto end_time = std::chrono::high_resolution_clock::now();
         result["processing_time"] = std::chrono::duration<double, std::milli>(end_time - start_time).count();

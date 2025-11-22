@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
+std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k,std::vector<std::vector<double>> &edge_lengths){
     std::vector<Path> A;
     std::priority_queue<Path, std::vector<Path>, Pathcmp> B;
     std::map<Path, bool> M;
@@ -16,12 +16,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
         return {};
     }
 
-    std::vector<std::unordered_map<int,double>> edge_lengths(G.V);
-    for(int i=0; i<G.V; i++){
-        for(Edge* e:G.adj[i]){
-            edge_lengths[i][e->get_dest()->getid()] = e->get_length();
-        }
-    }
+    
 
     A.push_back(first);
     M[first] = 1;
