@@ -32,6 +32,7 @@ public:
                 for (Edge* e : G.adj[u->getid()]) {
                     if (e->get_dest()->getid() == v->getid()) {
                         best = std::min(best, e->getTime());
+                        total += best;
                         found = true;
                     }
                 }
