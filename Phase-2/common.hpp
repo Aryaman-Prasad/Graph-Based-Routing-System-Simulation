@@ -27,7 +27,7 @@ Path P_path(Node* start, Node* dest, std::vector<double>& sp, std::vector<int>& 
 
 void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<int> &parent);
 
-std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k,std::vector<std::vector<double>> edge_lengths);
+std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k);
 
 std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold, double& total_penalty);
 

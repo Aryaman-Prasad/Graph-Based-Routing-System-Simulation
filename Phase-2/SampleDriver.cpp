@@ -56,12 +56,7 @@ int main(int argc, char* argv[]) {
     queries_json = queries_json["events"];
 
     std::vector<json> results;
-    std::vector<std::vector<double>> edge_lengths(G.V,std::vector<double> (G.V));
-    for(int i=0; i<G.V; i++){
-        for(Edge* e:G.adj[i]){
-            edge_lengths[i][e->get_dest()->getid()] = e->get_length();
-        }
-    }
+    
     for (const auto& query : queries_json) {
         auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -72,7 +67,7 @@ int main(int argc, char* argv[]) {
 
         // Answer each query replacing the function process_query using 
         // whatever function or class methods that you have implemented
-        json result = process_query(query, G,ref_sssp,edge_lengths);
+        json result = process_query(query, G,ref_sssp);
 
         auto end_time = std::chrono::high_resolution_clock::now();
         result["processing_time"] = std::chrono::duration<double, std::milli>(end_time - start_time).count();
