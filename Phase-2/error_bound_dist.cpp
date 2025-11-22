@@ -1,7 +1,7 @@
 #include "common.hpp"
 
 #ifndef INF
-#define INF 1000000000.0
+#define INF std::numeric_limits<double>::max()
 #endif
 
 void sssp_all(Graph &G, Node* s, std::vector<double> &sp){
@@ -72,4 +72,5 @@ double approx_dist(std::vector<std::vector<double>> &ref_sssp, Node* a, Node* b)
     }
 
     return minmax;
+
 }
