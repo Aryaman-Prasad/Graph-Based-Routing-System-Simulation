@@ -33,6 +33,7 @@ bool sim(Path &p1, Path &p2, double threshold) {
     return false;
 }
 
+// constructing heap
 void init_Heap(Graph& G, int pos, Path& p, std::map<int, std::priority_queue<std::pair<double, Edge*>, std::vector<std::pair<double, Edge*>>>>& H) {
     int n = p.vertices.size();
 
@@ -60,7 +61,7 @@ Path shortest_path(Graph& G, Node* start, Node* dest) {
 }
 
 std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold, double& total_penalty) {
-    std::vector<Path> lowest;
+    std::vector<Path> lowest;// maintains shortest paths
     std::vector<Edge*> DNR;
     std::map<int, std::priority_queue<std::pair<double,Edge*>,std::vector<std::pair<double,Edge*>>>> H;
 
@@ -83,7 +84,7 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     while ((int)lowest.size()<k) {
         //Choose the latest path added to lowest, and pop its smallest edge
         auto& h = H[lowest.size()-1];
-        if (h.empty()) {
+        if (h.empty()) {//no paths left
             break;
         }
 
@@ -143,24 +144,6 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
             break;
         }
     }
-
-    //Calculate penalty
-    for (int i=0; i<lowest.size(); i++) {
-        int overlap = 0;
-        for (int j=i; j<lowest.size(); j++) {
-            if (j == i) {
-                continue;
-            }
-            if (!sim(lowest[i], lowest[j], threshold)) {
-                overlap++;
-            }
-        }
-
-        double len = lowest[i].length;
-        double dist_penalty = (len-shortest_len)/(shortest_len) + 0.1;
-        total_penalty += dist_penalty * overlap;
-    }
-
     return lowest;
 
 }
