@@ -7,7 +7,7 @@ SHELL := /bin/bash
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -g -Wall -Wextra -Wpedantic -std=c++20 -O3 -march=native -flto=auto -ffast-math -funroll-loops -DNDEBUG -pipe
+CXXFLAGS = -g -Wall -Wextra -Wpedantic -std=c++20 -O3 -march=native 
 
 # Source files
 PH1_DIR = Phase-1
