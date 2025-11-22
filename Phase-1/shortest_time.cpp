@@ -17,16 +17,17 @@
 #define PROFILE_LEN 96
 #endif
 
-// SUBJECT TO FURTHER CHECKING, NOT YET GUARANTEED TO BE CORRECT...
+// TO get travel time from node to dest along the edge when it arrives at arrival time
 double get_travel_time(Edge* e, double arrival_time){
     if (e->getProfile().size() == 0){
-        return e->getTime();
+        return e->getTime();// For edge with no speed profile
     }
 
     double dist_left = e->get_length();
     double time = 0;
     int t = 0;
 
+    // calculating time based on current time , speed and distance
     while (dist_left > 0){
         double speed = (e->getProfile())[(t + (int) arrival_time / INTERVAL_TIME) % PROFILE_LEN];
         double interval_time = ((double) INTERVAL_TIME - arrival_time);
@@ -58,18 +59,11 @@ void shortest_time(Graph &G, Node* s, int &target, std::vector<double> &arrival_
         return ;
     }
 
-    // Initialization...
-    int n = G.V;
-
-    // arrival_time.assign(n, INF);
-    // parent.assign(n, -1);
-    // Can be needed if sp and parent are defined as vectors...
-
     arrival_time[s->getid()] = 0.0;
     unknown.push({0.0, s});
 
     while (!unknown.empty()){
-        std::pair<double, Node*> v = unknown.top();
+        std::pair<double, Node*> v = unknown.top();// always picking shortest time
         unknown.pop();
 
         if (v.second->getid() == target){

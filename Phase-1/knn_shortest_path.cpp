@@ -31,8 +31,6 @@ std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi){ // Implem
     int n = G.V;
 
     sp.assign(n, INF);
-    // parentassign(n, nullptr);
-    // Now its a vector :D
 
     std::vector<int> KNN;
     std::map<Node*, bool> M;

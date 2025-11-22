@@ -1,6 +1,5 @@
 // Common header file for inclusion of shortest_distance.cpp, 
-// shortest_time.cpp, knn_shortest_path.cpp and knn_shortest_euclidean.cpp.
-// Can also include all remaining headers here if needed...
+// shortest_time.cpp, knn_shortest_path.cpp and knn_shortest_euclidean.cpp
 
 #include "graph.hpp"
 
@@ -22,12 +21,20 @@ struct cmp_r{
     }
 };
 
+// Single Source shortest path(Dijkstra)
 void sssp(Graph &G, Node* s, int &target, std::vector<double> &sp, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
+// To get Travel time while travelling along the edge based on the arrival time
 double get_travel_time(Edge* e, double arrival_time);
+
+// To get path which we will reach in least time
 void shortest_time(Graph &G, Node* s, int &target, std::vector<double> &arrival_time, std::vector<int> &parent, std::map<std::string, bool> &forbidden_roads);
 
+// To get the nearest node of a point in plane based on euclidean distance
 Node* nearest_node(Graph &G, std::pair<double, double> &p, std::string &poi);
+
+// To get K nearest neighbour with the given poi based on shortest path distance
 std::vector<int> KNN_sssp(Graph &G, Node* s, int k, std::string &poi);
 
+// To get K nearest neighbour with the given poi based on shortest euclidean distance
 std::vector<int> KNN_euclidean(Graph &G, std::pair<double, double> &s, int &k, std::string &poi);

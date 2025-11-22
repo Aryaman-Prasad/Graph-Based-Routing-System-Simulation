@@ -16,13 +16,6 @@ void sssp(Graph &G, Node* s, int &target, std::vector<double> &sp, std::vector<i
         return ;
     }
 
-    // Initialization...
-    int n = G.V;
-
-    // sp.assign(n, INF);
-    // parent.assign(n, -1);
-    // Now they are vectors :D
-
     sp[s->getid()] = 0.0;
     unknown.push({0.0,s});
 
@@ -43,7 +36,7 @@ void sssp(Graph &G, Node* s, int &target, std::vector<double> &sp, std::vector<i
             continue;
         }
 
-        for (Edge* e : G.adj[v.second->getid()]){ // Noe it will work :D
+        for (Edge* e : G.adj[v.second->getid()]){ 
             if (e->get_dest()->isRestricted() || e->isRestricted() || forbidden_roads[e->getType()]){
                 continue; // Skip if either the Edge or the destination Node is restricted...
             }

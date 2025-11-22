@@ -57,7 +57,6 @@ void process_graph(json j, Graph &G){
         G.addEdge(G.getNode(v), e2, false);
     }
 
-    // Returning final graph
     return ;
 }
 

@@ -17,11 +17,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Read graph from first file
-    /*
-        Add your graph reading and processing code here
-        Initialize any classes and data structures needed for query processing
-    */
     std::ifstream graph_file(argv[1]);
     if (!graph_file.is_open()) {
         std::cerr << "Failed to open " << argv[1] << std::endl;
@@ -54,13 +49,6 @@ int main(int argc, char* argv[]) {
     for (const auto& query : queries_json) {
         auto start_time = std::chrono::high_resolution_clock::now();
 
-        /*
-            Add your query processing code here
-            Each query should return a json object which should be printed to sample.json
-        */
-
-        // Answer each query replacing the function process_query using 
-        // whatever function or class methods that you have implemented
         json result = process_query(query, G);
 
         auto end_time = std::chrono::high_resolution_clock::now();
