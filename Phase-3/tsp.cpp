@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-void scheduling(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &boys, std::unordered_map<int, DijkstraResult> &D, int num_b, int num_o){
+void scheduling(std::vector<Order> &orders, std::vector<Boy> &boys, std::unordered_map<int, DijkstraResult> &D, int num_b, int num_o){
     int remaining = num_o;
 
     while (remaining > 0){
@@ -61,7 +61,7 @@ void scheduling(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &bo
             continue;
         }
 
-        for (auto idx = 1; idx < path1.size(); idx++){
+        for (auto idx = 1; idx < (int)path1.size(); idx++){
             boys[b].full_path.push_back(path1[idx]);
         }
         boys[b].current_time += bestD1;
@@ -76,7 +76,7 @@ void scheduling(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &bo
             continue;
         }
 
-        for (auto idx = 1; idx < path2.size(); idx++){
+        for (auto idx = 1; idx < (int)path2.size(); idx++){
             boys[b].full_path.push_back(path2[idx]);
         }
         boys[b].current_time += bestD2;
@@ -97,7 +97,7 @@ double assignment(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &
         double t = 0.0;
         int cur = boys[b].full_path.front();
         visits[b].push_back({cur, t});
-        for (auto idx = 1; idx<boys[b].full_path.size(); idx++){
+        for (auto idx = 1; idx<(int)boys[b].full_path.size(); idx++){
             int nxt = boys[b].full_path[idx];
             double w = get_edge_weight(G, cur, nxt);
             if (w >= INF/2){
@@ -130,11 +130,11 @@ double assignment(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &
         int best_boy = -1;
 
         for (int b=0; b<num_b; b++){
-            double t_pick = -1.0;
+            //double t_pick = -1.0;
             int idx_pick = -1;
-            for (auto idx = 0; idx<visits[b].size(); idx++){
+            for (auto idx = 0; idx<(int)visits[b].size(); idx++){
                 if (visits[b][idx].first == pu){
-                    t_pick = visits[b][idx].second;
+                    //t_pick = visits[b][idx].second;
                     idx_pick = (int) idx;
                     break;
                 }
@@ -145,7 +145,7 @@ double assignment(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &
 
             double t_del = -1.0;
             int idx_del = -1;
-            for (auto j = idx_pick + 1; j < visits[b].size(); j++){
+            for (auto j = idx_pick + 1; j < (int)visits[b].size(); j++){
                 if (visits[b][j].first == de) {
                     t_del = visits[b][j].second;
                     idx_del = (int)j;

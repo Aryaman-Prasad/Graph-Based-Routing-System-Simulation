@@ -181,6 +181,7 @@ json process_query(json query, Graph &G){
     
     // No other possible input should exist
     assert(false);
+    return {};
 }
 
 #endif

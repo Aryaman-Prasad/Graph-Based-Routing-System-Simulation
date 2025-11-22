@@ -29,7 +29,7 @@ void sssp(Graph &G, Node* s, int target, std::vector<double> &sp, std::vector<in
 
 std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k);
 
-std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold, double& total_penalty);
+std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold);
 
 void error_bound_dist(Graph &G, double &e, std::vector<std::vector<double>> &ref_sssp);
 double approx_dist(std::vector<std::vector<double>> &ref_sssp, Node* a, Node* b);

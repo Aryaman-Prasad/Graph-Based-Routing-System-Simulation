@@ -21,7 +21,7 @@ class Node{
     std::vector<std::string> pois;
 
 public:
-    Node(int id, double lat, double lon, std::vector<std::string> pois) : id(id), lat(lat), lon(lon), pois(pois), restricted(false){}
+    Node(int id, double lat, double lon, std::vector<std::string> pois) : id(id), lat(lat), lon(lon), restricted(false),pois(pois){}
 
     ~Node(){}
 

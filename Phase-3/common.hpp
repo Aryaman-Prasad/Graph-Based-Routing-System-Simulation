@@ -38,7 +38,7 @@ void initialize(std::vector<Boy> &boys, int num_b, int depot);
 
 std::unordered_map<int, DijkstraResult> precompute(const Graph &G, const std::vector<Order> &orders, int num_o, int depot);
 
-void scheduling(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &boys, std::unordered_map<int, DijkstraResult> &D, int num_b, int num_o);
+void scheduling(std::vector<Order> &orders, std::vector<Boy> &boys, std::unordered_map<int, DijkstraResult> &D, int num_b, int num_o);
 double assignment(const Graph &G, std::vector<Order> &orders, std::vector<Boy> &boys, int num_b, int num_o);
 
 

@@ -45,12 +45,11 @@ json process_query(json query,Graph &G, std::vector<std::vector<double>> &ref_ss
             int e = query["target"];
             int k = query["k"];
             double t = ((double) query["overlap_threshold"]) / 100;
-            double penalty = 0.0;
 
             Node* start = G.vertices[s];
             Node* end = G.vertices[e];
 
-            std::vector<Path> lowest = KSP_heuristic(G, start, end, k, t, penalty);
+            std::vector<Path> lowest = KSP_heuristic(G, start, end, k, t);
 
             std::vector<json> paths;
 

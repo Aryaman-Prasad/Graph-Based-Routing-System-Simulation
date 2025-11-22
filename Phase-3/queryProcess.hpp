@@ -30,7 +30,7 @@ json process_query(json query, Graph &G){
 
         std::unordered_map<int, DijkstraResult> D = precompute(G, os, num, depot);
 
-        scheduling(G, os, boys, D, m, num);
+        scheduling(os, boys, D, m, num);
 
         double cost = assignment(G, os, boys, m, num);
 

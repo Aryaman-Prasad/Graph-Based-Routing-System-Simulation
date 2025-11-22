@@ -46,7 +46,7 @@ std::vector<Path> KSP(Graph &G, Node* start, Node* dest, int &k){
             std::vector<Node*> restricted_nodes;
 
             for (auto &p : A){
-                if (p.vertices.size() > j && rootPath.vertices == std::vector<int> (p.vertices.begin(), p.vertices.begin() + j + 1)){
+                if ((int)p.vertices.size() > j && rootPath.vertices == std::vector<int> (p.vertices.begin(), p.vertices.begin() + j + 1)){
                     int v1 = p.vertices[j];
                     int v2 = p.vertices[j+1];
 

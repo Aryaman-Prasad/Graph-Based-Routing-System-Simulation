@@ -3,7 +3,7 @@
 Path P_path(Node* start, Node* dest, std::vector<double>& sp, std::vector<int>& parent) {
     Path path;
 
-    if (sp.size() <= dest->getid() || sp[dest->getid()] == INF)
+    if ((int)sp.size() <= dest->getid() || sp[dest->getid()] == INF)
         return path; 
 
     int curr = dest->getid();

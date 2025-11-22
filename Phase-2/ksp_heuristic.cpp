@@ -60,7 +60,7 @@ Path shortest_path(Graph& G, Node* start, Node* dest) {
     return path;
 }
 
-std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold, double& total_penalty) {
+std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, double &threshold) {
     std::vector<Path> lowest;// maintains shortest paths
     std::vector<Edge*> DNR;
     std::map<int, std::priority_queue<std::pair<double,Edge*>,std::vector<std::pair<double,Edge*>>>> H;
@@ -74,7 +74,6 @@ std::vector<Path> KSP_heuristic(Graph &G, Node* start, Node* dest, int &k, doubl
     if (first.vertices.empty()){
         return {};
     }
-    double shortest_len = sp[dest->getid()];
 
     lowest.push_back(first);
 

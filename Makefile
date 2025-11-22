@@ -12,6 +12,7 @@ CXXFLAGS = -g -Wall -Wextra -Wpedantic -std=c++20 -O3 -march=native -flto=auto -
 # Source files
 PH1_DIR = Phase-1
 PH2_DIR = Phase-2
+PH3_DIR = Phase-3
 
 SOURCES1 = \
     $(PH1_DIR)/SampleDriver.cpp \
@@ -24,23 +25,31 @@ SOURCES1 = \
 SOURCES2 = \
     $(PH2_DIR)/SampleDriver.cpp \
     $(PH2_DIR)/graphUtils.cpp \
-    $(PH2_DIR)/approx_shortest_dist.cpp \
     $(PH2_DIR)/error_bound_dist.cpp \
     $(PH2_DIR)/shortest_distance.cpp \
     $(PH2_DIR)/k_shortest_paths.cpp \
     $(PH2_DIR)/ksp_heuristic.cpp \
     $(PH2_DIR)/p_path.cpp
 
+SOURCES3 = \
+    $(PH3_DIR)/SampleDriver.cpp \
+    $(PH3_DIR)/graphUtils.cpp \
+    $(PH3_DIR)/helpers.cpp \
+    $(PH3_DIR)/precomputes.cpp \
+    $(PH3_DIR)/tsp.cpp 
+
 # Object files
 OBJECTS1 = $(SOURCES1:.cpp=.o)
 OBJECTS2 = $(SOURCES2:.cpp=.o)
+OBJECTS3 = $(SOURCES3:.cpp=.o)
 
 # Executable
 EXEC1 = phase1 
 EXEC2 = phase2
+EXEC3 = phase3
 
 # HEADERS
-HEADERS = $(wildcard Phase-1/*.hpp Phase-2/*.hpp)
+HEADERS = $(wildcard Phase-1/*.hpp Phase-2/*.hpp Phase-3/*.hpp)
 
 # Default target
 all: build
@@ -54,11 +63,14 @@ phase1: $(OBJECTS1)
 phase2: $(OBJECTS2)
 	$(CXX) $(CXXFLAGS) -o $(EXEC2) $(OBJECTS2)
 
+phase3: $(OBJECTS3)
+	$(CXX) $(CXXFLAGS) -o $(EXEC3) $(OBJECTS3)
+
 # Compile source files to object files
 %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean up object files and executable (Unix-like commands)
 clean:
-	rm -f $(OBJECTS1) $(EXEC1) $(OBJECTS2) $(EXEC2)
-	find . -type f -name '*~'  -exec rm {} +
+	rm -f $(OBJECTS1) $(EXEC1) $(OBJECTS2) $(EXEC2) $(OBJECTS3) $(EXEC3)
+	find . -type f -name '*~' -exec rm {} +
