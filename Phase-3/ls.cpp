@@ -43,7 +43,7 @@ public:
     }
 };
 
-bool isRouteFeasible(const std::vector<Node*>& route, const Solution& s) {
+bool isRouteFeasible(Graph& G, const std::vector<Node*>& route, const Solution& s) {
     std::unordered_map<int,int> pos;
     for (int i = 0; i < (int)route.size(); i++)
         pos[route[i]->getid()] = i;
@@ -54,6 +54,20 @@ bool isRouteFeasible(const std::vector<Node*>& route, const Solution& s) {
         if (pos.count(p) && pos.count(d)) {
             if (pos[d] < pos[p]) {return false;}
         }
+    }
+
+    for (int i = 0; i+1 < (int)route.size(); i++) {
+        Node* u = route[i];
+        Node* v = route[i+1];
+        bool edgeExists = false;
+        // Look for an edge u -> v in the adjacency list
+        for (Edge* e : G.adj[u->getid()]) {
+            if (e->get_dest()->getid() == v->getid()) {
+                edgeExists = true;
+                break;
+            }
+        }
+        if (!edgeExists) {return false;}
     }
     return true;
 }
@@ -68,7 +82,7 @@ bool IntraRoute2Opt(Solution& s, Graph& G) {
         for (int i = 1; i < n-2; i++) {
             for (int j = i+1; j < n-1; j++) {
                 std::reverse(route->vertices.begin()+i, route->vertices.begin()+j+1);
-                if (isRouteFeasible(route->vertices, s)) {
+                if (isRouteFeasible(G, route->vertices, s)) {
                     double newCost = s.getCost(G);
                     if (newCost < cost) {
                         improved = true;
@@ -96,7 +110,7 @@ bool IntraRouteReinsertion(Solution& s, Graph& G) {
 
             for (int j = 1; j < n-1; j++) {
                 route->vertices.insert(route->vertices.begin() + j, node);
-                if (isRouteFeasible(route->vertices, s)) {
+                if (isRouteFeasible(G, route->vertices, s)) {
                     double newCost = s.getCost(G);
                     if (newCost < cost) {improved_now = true;}
                     else {route->vertices.erase(route->vertices.begin() + j);}
@@ -120,7 +134,7 @@ bool IntraRouteSwap(Solution& s, Graph& G) {
             for (int j = i+1; j < n-1; j++) {
                 std::swap(route[i], route[j]);
 
-                if (isRouteFeasible(route->vertices, s)) {
+                if (isRouteFeasible(G, route->vertices, s)) {
                     double newCost = s.getCost(G);
                     if (newCost < cost) {improved = true;}
                     else {std::swap(route[i], route[j]);}
@@ -145,7 +159,7 @@ bool InterRouteReinsertion(Solution& s, Graph& G) {
                     // Transfer from ra to rb
                     routeA.erase(routeA.begin() + i);
                     routeB.insert(routeB.begin() + j, u);
-                    if (isRouteFeasible(routeA, s) && isRouteFeasible(routeB, s)) {
+                    if (isRouteFeasible(G, routeA, s) && isRouteFeasible(G, routeB, s)) {
                         s.cost = s.getCost(G);
                         return true;
                     }
@@ -170,7 +184,7 @@ bool InterRouteSwap(Solution& s, Graph& G) {
                 // Try inserting u into every position of route rb
                 for (int j = 0; j <= routeB.size(); j++) {
                     std::swap(routeA[i],routeB[j]);
-                    if (isRouteFeasible(routeA, s) && isRouteFeasible(routeB, s)) {
+                    if (isRouteFeasible(G, routeA, s) && isRouteFeasible(G, routeB, s)) {
                         s.cost = s.getCost(G);
                         return true;
                     }

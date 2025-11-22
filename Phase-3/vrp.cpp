@@ -36,7 +36,7 @@ Solution getInitialSolution(Graph& G, int m, std::vector<Order> orders, Node* de
                     // Temporary insertion
                     R.insert(R.begin() + i, P);
                     R.insert(R.begin() + j + 1, D);
-                    if (isRouteFeasible(R, s)) {
+                    if (isRouteFeasible(G, R, s)) {
                         double newCost = s.getCost(G);
                         // Undo to get original
                         R.erase(R.begin() + j + 1);
@@ -165,7 +165,7 @@ void perturb(Graph& G, Solution& s) {
                     // Perform temporary insertion
                     R.insert(R.begin() + i, P);
                     R.insert(R.begin() + j + 1, D);
-                    if (isRouteFeasible(R, s)) {
+                    if (isRouteFeasible(G, R, s)) {
                         double newC = s.getCost(G);
                         double oldC = s.cost;
                         double inc = newC - oldC;
