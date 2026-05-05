@@ -1,4 +1,6 @@
 # Graph-Based-Routing-System-Simulation
+A **graph-based routing system** inspired by Google Maps, implementing **Dijkstra’s shortest path** and the **ESX algorithm** for vehicle routing, with original design ideas and implementations for shortest paths, k-shortes paths and the **Travelling Salesman problem**, and also a clean **JSON-based API** for testing
+
 DSA Lab Project (Autumn 2025)
 
 Contributors: Aryaman, Sabarinath, Shriram
